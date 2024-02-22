@@ -8,27 +8,32 @@ CREATE TABLE Utilizatori (
 CREATE TABLE Locatii (
     IdLocatie INTEGER PRIMARY KEY AUTOINCREMENT,
     UtilizatorIdUtilizator INTEGER NOT NULL,
-    RezervareIdRezervare INTEGER NOT NULL,
     Descriere TEXT,
     Adresa TEXT,
     Nume TEXT,
+    Oras TEXT,
+    Judet TEXT,
     Rating REAL NOT NULL,
     Capacitate INTEGER NOT NULL,
-    PretPeNoapte REAL NOT NULL,
-    FOREIGN KEY(UtilizatorIdUtilizator) REFERENCES Utilizator(IdUtilizator),
-    FOREIGN KEY(RezervareIdRezervare) REFERENCES Rezervare(IdRezervare)
+    PretPeZi REAL NOT NULL
+    CheckIn TEXT,
+    CheckOut TEXT,
+    Facilitati TEXT,
+    FOREIGN KEY(UtilizatorIdUtilizator) REFERENCES Utilizator(IdUtilizator)
 );
 
 CREATE TABLE Rezervari (
     IdRezervare INTEGER PRIMARY KEY AUTOINCREMENT,
     UtilizatorIdUtilizator2 INTEGER NOT NULL,
     UtilizatorIdUtilizator INTEGER NOT NULL,
+    LocatiiIdLocatie2 INTEGER NOT NULL,
     CheckInDate TEXT,
     CheckOutDate TEXT,
     Pret REAL NOT NULL,
     Status TEXT,
     FOREIGN KEY(UtilizatorIdUtilizator) REFERENCES Utilizator(IdUtilizator),
-    FOREIGN KEY(UtilizatorIdUtilizator2) REFERENCES Utilizator(IdUtilizator)
+    FOREIGN KEY(UtilizatorIdUtilizator2) REFERENCES Utilizator(IdUtilizator),
+    FOREIGN KEY(LocatiiIdLocatie2) REFERENCES Locatii(IdLocatie)
 );
 
 CREATE TABLE Recenzii (
@@ -63,4 +68,11 @@ CREATE TABLE Categorie_Locatie (
     PRIMARY KEY (CategorieIdCategorie, LocatieIdLocatie),
     FOREIGN KEY (CategorieIdCategorie) REFERENCES Categorie(IdCategorie),
     FOREIGN KEY (LocatieIdLocatie) REFERENCES Locatie(IdLocatie)
+);
+
+CREATE TABLE Imagini (
+    IdImagine INTEGER PRIMARY KEY,
+    IdLocatie INTEGER,
+    URLimagine TEXT,
+    FOREIGN KEY (IdLocatie) REFERENCES Locatii(IdLocatie)
 );

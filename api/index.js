@@ -3,6 +3,8 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
+const multer = require('multer');
+const fs = require('fs');
 
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('./database.sqlite3', sqlite3.OPEN_READWRITE, (err)=> {
@@ -15,6 +17,7 @@ const jwtSecret = 'eqwueqwo21ui3o1321';
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
+app.use('/uploads', express.static(__dirname+'/uploads'));
 app.use(cors({
     credentials: true,
     origin: 'http://localhost:3000'
@@ -101,4 +104,27 @@ app.get('/profile', (req, res) => {
     } else {
         res.json(null);
     }
+});
+
+app.post('/logout', (req, res)=> {
+    res.cookie('token', '').json(true);
+});
+
+const photosMiddleware = multer({dest:'uploads/'});
+app.post('/upload',photosMiddleware.array('photos', 100), (req, res) => {
+    // aici se vor crea noi intrari in tabela "Imagini"
+    // in raspuns se trimit inapoi id-urile acestor noi intrari,
+    // astfel incat acestea sa poata fi asociate mai departe Locatiei noi 
+    
+    const uploadedFiles = [];
+    for (let i=0; i< req.files.length; i++) {
+        const {path, originalname} = req.files[i];
+        const parts = originalname.split('.');
+        const ext = parts[parts.length-1];
+        const newPath = path + '.' + ext;
+        fs.renameSync(path, newPath);
+        uploadedFiles.push(newPath.replace('uploads/', ''));
+    }
+    
+    res.json(uploadedFiles);
 });
