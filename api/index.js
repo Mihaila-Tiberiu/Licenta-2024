@@ -64,14 +64,13 @@ app.post('/register', (req, res) => {
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
 
-    // Verificam daca utilizatorul exista in BD
+    // verificam daca utilizatorul exista in BD
     db.get('SELECT * FROM Utilizatori WHERE Username = ?', [username], (err, row) => {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
 
         if (!row) {
-            // Daca nu avem eroare, dar nu am gasit utilizatorul
             return res.status(404).json({ error: 'User not found' });
         }
 
@@ -81,7 +80,6 @@ app.post('/login', (req, res) => {
             return res.status(401).json({ error: 'Parola incorecta' });
         }
         else{
-            // Userul exista si parola este corecta
             jwt.sign({
                 IdUtilizator: row.IdUtilizator,
                 Username: row.Username, 
@@ -112,9 +110,6 @@ app.post('/logout', (req, res)=> {
 
 const photosMiddleware = multer({dest:'uploads/'});
 app.post('/upload',photosMiddleware.array('photos', 100), (req, res) => {
-    // aici se vor crea noi intrari in tabela "Imagini"
-    // in raspuns se trimit inapoi id-urile acestor noi intrari,
-    // astfel incat acestea sa poata fi asociate mai departe Locatiei noi 
     
     const uploadedFiles = [];
     for (let i=0; i< req.files.length; i++) {
@@ -127,4 +122,32 @@ app.post('/upload',photosMiddleware.array('photos', 100), (req, res) => {
     }
     
     res.json(uploadedFiles);
+});
+
+app.post('/places', (req, res) => {
+    const placeData = req.body;
+
+    db.run(`INSERT INTO Locatii (UtilizatorIdUtilizator, Descriere, Adresa, Nume, Oras, Judet, Rating, Capacitate, PretPeZi, CheckIn, CheckOut, Facilitati)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [placeData.utilizatorIdUtilizator, placeData.descriere, placeData.alte, placeData.denumire, placeData.oras, placeData.judet, 0, placeData.capacitate, placeData.ppzi, placeData.checkIn, placeData.checkOut, placeData.facilitati],
+            function(err) {
+                if (err) {
+                    console.error(err.message);
+                    res.status(500).send("Error creating location entry");
+                    return;
+                }
+                const locationId = this.lastID;
+
+                placeData.addedPhotos.forEach(photoURL => {
+                    db.run(`INSERT INTO Imagini (IdLocatie, URLimagine) VALUES (?, ?)`, [locationId, photoURL], function(err) {
+                        if (err) {
+                            console.error(err.message);
+                            res.status(500).send("Error creating image entry");
+                            return;
+                        }
+                    });
+                });
+
+                res.status(200).send("Entries created successfully");
+            });
 });

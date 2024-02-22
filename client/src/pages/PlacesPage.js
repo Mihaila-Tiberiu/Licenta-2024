@@ -2,6 +2,9 @@ import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import { useEffect } from "react";
+import { Navigate } from "react-router-dom";
+import { useContext } from "react";
+import { UserContext } from "../UserContext";
 
 export default function PlacesPage(){
     const {action} = useParams();
@@ -16,6 +19,9 @@ export default function PlacesPage(){
     const [facilitati, setFacilitati] = useState([]);
     const [checkIn, setCheckIn] = useState('');
     const [checkOut, setCheckOut] = useState('');
+    const [redirect, setRedirect] = useState('');
+
+    const { user } = useContext(UserContext);
 
     function uploadPhoto(ev) {
         const files = ev.target.files;
@@ -46,9 +52,42 @@ export default function PlacesPage(){
         
     }
 
-    useEffect(() => {
-        console.log(facilitati);
-    }, [facilitati]);
+    async function addNewPlace(ev){
+        ev.preventDefault();
+
+        const facilitatiString = facilitati.join(', ');
+
+        const placeData = 
+        {
+            utilizatorIdUtilizator: user.IdUtilizator,
+            denumire,
+            descriere,
+            judet,
+            oras,
+            alte,
+            capacitate,
+            ppzi,
+            addedPhotos,
+            facilitati: facilitatiString,
+            checkIn,
+            checkOut
+        }
+        try {
+            await axios.post('/places', placeData);
+            setRedirect('/account/places');
+        } catch (error) {
+            console.error('Nu a putut fi adaugata o noua locatie:', error);
+        }
+    }
+
+    if (redirect){
+        return (
+            <>
+                <Navigate to={redirect} />
+                {window.location.reload()}
+            </>
+        );
+    }    
 
     return (
         <div>
@@ -63,7 +102,7 @@ export default function PlacesPage(){
                 </div>
             )}
             {action === 'new' && (
-                <form>
+                <form onSubmit={addNewPlace}>
                     <h2 className="text-xl mt-4 pl-3">Denumirea locației</h2>
                     <input type="text" value={denumire} onChange={ev=>setDenumire(ev.target.value)} placeholder="Grădină luminoasă spectaculoasă"/>
                     <h2 className="text-xl mt-4 pl-3">Descrierea locației</h2>
@@ -82,15 +121,15 @@ export default function PlacesPage(){
                     <h2 className="text-xl mt-4 pl-3">Fotografii</h2>
                     <div className="mt-2 grid gap-2 grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
                         {addedPhotos.length > 0 && addedPhotos.map(link=>(
-                            <div className="h-32 flex">
+                            <div className="h-32 flex" key={link}>
                                 <img className="rounded-2xl w-full object-cover" src={'http://localhost:4000/uploads/'+link} alt=''/>
                             </div>
                         ))}
                         
                         <label className="flex items-center cursor-pointer flex border bg-transparent rounded-2xl p-8 text-2xl text-gray-600 justify-center">
                             <input type="file" multiple className="hidden" onChange={uploadPhoto}/>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
                             </svg>
                         </label>
                     </div>
