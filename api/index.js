@@ -157,49 +157,52 @@ app.get('/api/userLocations', (req, res) => {
     const userId = req.query.userId;
   
     const sql = `
-      SELECT L.*, I.*
-      FROM Locatii L
-      LEFT JOIN Imagini I ON L.IdLocatie = I.IdLocatie
-      WHERE L.UtilizatorIdUtilizator = ?
+        SELECT L.IdLocatie AS LocatiiLocatieId, I.IdLocatie AS ImaginiLocatieId, L.*, I.*
+        FROM Locatii L
+        LEFT JOIN Imagini I ON L.IdLocatie = I.IdLocatie
+        WHERE L.UtilizatorIdUtilizator = ?
     `;
   
     db.all(sql, [userId], (err, rows) => {
-      if (err) {
-        console.error('Error retrieving locations:', err.message);
-        res.status(500).json({ error: 'Failed to retrieve locations' });
-        return;
-      }
-  
-      const locations = rows.reduce((acc, row) => {
-        const locationId = row.IdLocatie;
-        if (!acc[locationId]) {
-          acc[locationId] = {
-            IdLocatie: row.IdLocatie,
-            UtilizatorIdUtilizator: row.UtilizatorIdUtilizator,
-            Descriere: row.Descriere,
-            Adresa: row.Adresa,
-            Nume: row.Nume,
-            Oras: row.Oras,
-            Judet: row.Judet,
-            Rating: row.Rating,
-            Capacitate: row.Capacitate,
-            PretPeZi: row.PretPeZi,
-            Facilitati: row.Facilitati,
-            images: []
-          };
+        if (err) {
+            console.error('Error retrieving locations:', err.message);
+            res.status(500).json({ error: 'Failed to retrieve locations' });
+            return;
         }
-        if (row.IdImagine) {
-          acc[locationId].images.push({
-            IdImagine: row.IdImagine,
-            IdLocatie: row.IdLocatie,
-            URLimagine: row.URLimagine
-          });
-        }
-        return acc;
-      }, {});
   
-      const locationsArray = Object.values(locations);
+        const locations = {};
   
-      res.json({ locations: locationsArray });
+        rows.forEach(row => {
+            const locationId = row.LocatiiLocatieId;
+            if (!locations[locationId]) {
+                locations[locationId] = {
+                    IdLocatie: row.LocatiiLocatieId,
+                    UtilizatorIdUtilizator: row.UtilizatorIdUtilizator,
+                    Descriere: row.Descriere,
+                    Adresa: row.Adresa,
+                    Nume: row.Nume,
+                    Oras: row.Oras,
+                    Judet: row.Judet,
+                    Rating: row.Rating,
+                    Capacitate: row.Capacitate,
+                    PretPeZi: row.PretPeZi,
+                    Facilitati: row.Facilitati,
+                    images: []
+                };
+            }
+  
+            if (row.IdImagine) {
+                locations[locationId].images.push({
+                    IdImagine: row.IdImagine,
+                    IdLocatie: row.ImaginiLocatieId,
+                    URLimagine: row.URLimagine
+                });
+            }
+        });
+  
+        const locationsArray = Object.values(locations);
+  
+        res.json({ locations: locationsArray });
     });
-  });
+});
+
