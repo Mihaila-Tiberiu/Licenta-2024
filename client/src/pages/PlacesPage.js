@@ -23,6 +23,21 @@ export default function PlacesPage(){
 
     const { user } = useContext(UserContext);
 
+    const [locations, setLocations] = useState([]);
+
+    useEffect(() => {
+        const fetchUserLocations = async () => {
+          try {
+            const response = await axios.get(`/api/userLocations?userId=${user.IdUtilizator}`);
+            setLocations(response.data.locations);
+          } catch (error) {
+            console.error('Error fetching user locations:', error);
+          }
+        };
+    
+        fetchUserLocations();
+      }, [user.IdUtilizator]);
+
     function uploadPhoto(ev) {
         const files = ev.target.files;
         const data = new FormData();
@@ -73,7 +88,7 @@ export default function PlacesPage(){
             checkOut
         }
         try {
-            await axios.post('/places', placeData);
+            await axios.post('/addNewLocation', placeData);
             setRedirect('/account/places');
         } catch (error) {
             console.error('Nu a putut fi adaugata o noua locatie:', error);
@@ -87,12 +102,39 @@ export default function PlacesPage(){
                 {window.location.reload()}
             </>
         );
-    }    
+    }
 
     return (
         <div>
             {action !== 'new' && (
                 <div className="text-center">
+                    <div>
+                        <h2 className="text-xl mt-4 pl-3 mb-4 font-bold">Locațiile tale</h2>
+                        {locations.map(location => (
+                            <div key={location.IdLocatie}>
+                            <h3 className="font-bold">{location.Nume}</h3>
+                            <p>Descriere: {location.Descriere}</p>
+                            <p>Adresa: {location.Adresa}</p>
+                            <p>Oras: {location.Oras}</p>
+                            <p>Judet: {location.Judet}</p>
+                            <p>Rating: {location.Rating !== 0 ? location.Rating : 'Nu exista recenzii'}</p>
+                            <p>Capacitate: {location.Capacitate}</p>
+                            <p>PretPeZi: {location.PretPeZi}</p>
+                            <p>Facilitati: {location.Facilitati}</p>
+                            {/* Render images for this location */}
+                            <div className="flex justify-center gap-4 mt-2 mb-2">
+                                {location.images.map(image => (
+                                    <div className="max-w-xs rounded-lg overflow-hidden" key={image.IdImagine}>
+                                        <img className="w-full rounded-lg h-auto" src={`http://localhost:4000/uploads/${image.URLimagine}`} alt={`Imagini lipsă!`} />
+                                    </div>
+                                ))}
+                            </div>
+
+
+
+                            </div>
+                        ))}
+                        </div>
                     <Link className="inline-flex gap-1 bg-primary text-white py-2 px-6 rounded-full" to={'/account/places/new'}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />

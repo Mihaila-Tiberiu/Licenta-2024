@@ -16,6 +16,7 @@ const jwtSecret = 'eqwueqwo21ui3o1321';
 
 const app = express();
 app.use(express.json());
+app.use(express.static('uploads'));
 app.use(cookieParser());
 app.use('/uploads', express.static(__dirname+'/uploads'));
 app.use(cors({
@@ -124,7 +125,7 @@ app.post('/upload',photosMiddleware.array('photos', 100), (req, res) => {
     res.json(uploadedFiles);
 });
 
-app.post('/places', (req, res) => {
+app.post('/addNewLocation', (req, res) => {
     const placeData = req.body;
 
     db.run(`INSERT INTO Locatii (UtilizatorIdUtilizator, Descriere, Adresa, Nume, Oras, Judet, Rating, Capacitate, PretPeZi, CheckIn, CheckOut, Facilitati)
@@ -151,3 +152,54 @@ app.post('/places', (req, res) => {
                 res.status(200).send("Entries created successfully");
             });
 });
+
+app.get('/api/userLocations', (req, res) => {
+    const userId = req.query.userId;
+  
+    const sql = `
+      SELECT L.*, I.*
+      FROM Locatii L
+      LEFT JOIN Imagini I ON L.IdLocatie = I.IdLocatie
+      WHERE L.UtilizatorIdUtilizator = ?
+    `;
+  
+    db.all(sql, [userId], (err, rows) => {
+      if (err) {
+        console.error('Error retrieving locations:', err.message);
+        res.status(500).json({ error: 'Failed to retrieve locations' });
+        return;
+      }
+  
+      const locations = rows.reduce((acc, row) => {
+        const locationId = row.IdLocatie;
+        if (!acc[locationId]) {
+          acc[locationId] = {
+            IdLocatie: row.IdLocatie,
+            UtilizatorIdUtilizator: row.UtilizatorIdUtilizator,
+            Descriere: row.Descriere,
+            Adresa: row.Adresa,
+            Nume: row.Nume,
+            Oras: row.Oras,
+            Judet: row.Judet,
+            Rating: row.Rating,
+            Capacitate: row.Capacitate,
+            PretPeZi: row.PretPeZi,
+            Facilitati: row.Facilitati,
+            images: []
+          };
+        }
+        if (row.IdImagine) {
+          acc[locationId].images.push({
+            IdImagine: row.IdImagine,
+            IdLocatie: row.IdLocatie,
+            URLimagine: row.URLimagine
+          });
+        }
+        return acc;
+      }, {});
+  
+      const locationsArray = Object.values(locations);
+  
+      res.json({ locations: locationsArray });
+    });
+  });
