@@ -206,3 +206,34 @@ app.get('/api/userLocations', (req, res) => {
     });
 });
 
+app.get('/places/:placeId', (req, res) => {
+    const {placeId} = req.params;
+    db.get('SELECT * FROM Locatii WHERE IdLocatie = ?', [placeId], (err, row) => {
+        if (err) {
+            console.error(err.message);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            if (row) {
+                res.json(row);
+            } else {
+                res.status(404).json({ error: 'Locatie not found' });
+            }
+        }
+    });
+});
+
+app.get('/getImageUrls/:placeId', (req, res) => {
+    const action = req.params.placeId;
+
+    // Execute the SQL query to select URLs
+    db.all('SELECT URLimagine FROM Imagini WHERE IdLocatie = ?', [action], (err, rows) => {
+        if (err) {
+            console.error(err.message);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            const urls = rows.map(row => row.URLimagine);
+            res.json(urls);
+        }
+    });
+});
+
