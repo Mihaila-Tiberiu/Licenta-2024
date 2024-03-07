@@ -12,13 +12,13 @@ export default function Header(){
             </a>
             </div>
             <div className="gap-2 flex border-4 border-blue-500 rounded-full p-2 shadow-md shadow-gray-500">
-            <div className="flex items-center">Oriunde</div>
+            <div className="flex items-center text-gray-600">Ce plănuiești?</div>
             <div className="border border-l border-gray-300"></div>
-            <div className="flex items-center">Oricand</div>
+            <div className="flex items-center text-gray-600">Unde?</div>
             <div className="border border-l border-gray-300"></div>
-            <div className="flex items-center">Nr oaspeti</div>
-            <div className="border border-l border-gray-300"></div>
-            <div className="flex items-center">Categorie</div>
+            <div className="flex items-center text-gray-600">Când?</div>
+            {/* <div className="border border-l border-gray-300"></div>
+            <div className="flex items-center">Categorie</div> */}
             <button className='bg-primary border rounded-full flex justify-center items-center text-white p-1'>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />

@@ -191,13 +191,18 @@ app.get('/api/userLocations', (req, res) => {
                 };
             }
   
+            // Assuming you have an array `locations` and you are pushing images into it
             if (row.IdImagine) {
                 locations[locationId].images.push({
                     IdImagine: row.IdImagine,
                     IdLocatie: row.ImaginiLocatieId,
                     URLimagine: row.URLimagine
                 });
-            }
+
+                // Sort the images array by IdImagine in ascending order
+                locations[locationId].images.sort((a, b) => a.IdImagine - b.IdImagine);
+            }   
+
         });
   
         const locationsArray = Object.values(locations);
@@ -236,4 +241,66 @@ app.get('/getImageUrls/:placeId', (req, res) => {
         }
     });
 });
+
+app.post('/editLocation', (req, res) => {
+    const placeData = req.body;
+
+    db.run(`UPDATE Locatii SET 
+                UtilizatorIdUtilizator = ?,
+                Descriere = ?,
+                Adresa = ?,
+                Nume = ?,
+                Oras = ?,
+                Judet = ?,
+                Capacitate = ?,
+                PretPeZi = ?,
+                CheckIn = ?,
+                CheckOut = ?,
+                Facilitati = ?
+            WHERE IdLocatie = ?`,
+            [
+                placeData.utilizatorIdUtilizator,
+                placeData.descriere,
+                placeData.alte,
+                placeData.denumire,
+                placeData.oras,
+                placeData.judet,
+                placeData.capacitate,
+                placeData.ppzi,
+                placeData.checkIn,
+                placeData.checkOut,
+                placeData.facilitati,
+                placeData.locationId
+            ],
+            function(err) {
+                if (err) {
+                    console.error(err.message);
+                    res.status(500).send("Error updating location entry");
+                    return;
+                }
+
+                // Delete existing photos associated with the location
+                db.run(`DELETE FROM Imagini WHERE IdLocatie = ?`, [placeData.locationId], function(err) {
+                    if (err) {
+                        console.error(err.message);
+                        res.status(500).send("Error deleting existing images");
+                        return;
+                    }
+
+                    // Insert new photos for the location
+                    placeData.addedPhotos.forEach(photoURL => {
+                        db.run(`INSERT INTO Imagini (IdLocatie, URLimagine) VALUES (?, ?)`, [placeData.locationId, photoURL], function(err) {
+                            if (err) {
+                                console.error(err.message);
+                                res.status(500).send("Error creating image entry");
+                                return;
+                            }
+                        });
+                    });
+
+                    res.status(200).send("Entry updated successfully");
+                });
+            });
+});
+
 

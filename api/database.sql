@@ -71,7 +71,7 @@ CREATE TABLE Categorie_Locatie (
 );
 
 CREATE TABLE Imagini (
-    IdImagine INTEGER PRIMARY KEY,
+    IdImagine INTEGER PRIMARY KEY AUTOINCREMENT,
     IdLocatie INTEGER,
     URLimagine TEXT,
     FOREIGN KEY (IdLocatie) REFERENCES Locatii(IdLocatie)
