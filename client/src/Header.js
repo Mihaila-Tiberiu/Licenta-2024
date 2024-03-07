@@ -5,7 +5,7 @@ import { UserContext } from './UserContext';
 export default function Header(){
     const {user} = useContext(UserContext);
     return(
-        <header className="flex justify-between">
+        <header className="flex justify-between p-4 bg-white">
             <div className="p-2 border-4 border-blue-500 rounded-full font-bold text-blue-500 shadow-md shadow-gray-500 flex items-center">
             <a href="/" className="flex items-center">
             <span>OccasioNest</span>

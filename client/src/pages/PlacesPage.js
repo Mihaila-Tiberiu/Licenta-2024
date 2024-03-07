@@ -208,6 +208,16 @@ export default function PlacesPage(){
         <div>
             {(action !== 'new' && isNaN(parseInt(action)) ) && (
                 <div>
+
+                    <div className="text-center mt-4">
+                        <Link className="inline-flex gap-1 bg-primary text-white py-2 px-6 rounded-full" to={'/account/places/new'}>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                            Adaugă o nouă locație
+                        </Link>
+                    </div>
+
                     <div>
                         <h2 className="text-center text-xl mt-4 pl-3 mb-4 font-bold">Locațiile tale</h2>
                         {locations.length > 0 && locations.map(location => (
@@ -231,15 +241,8 @@ export default function PlacesPage(){
                                 <p>Facilitati: {location.Facilitati}</p> */}
                             </Link>
                         ))}
-                        </div>
-                    <div className="text-center mt-4">
-                        <Link className="inline-flex gap-1 bg-primary text-white py-2 px-6 rounded-full" to={'/account/places/new'}>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                        </svg>
-                            Adaugă o nouă locație
-                        </Link>
                     </div>
+                    
                 </div>
             )}
             {action === 'new' && (

@@ -9,3 +9,7 @@ input[type="text"], input[type="password"], input[type="email"], input[type="num
 textarea{
     height: 140px;
 }
+
+body{
+    @apply bg-gray-800;
+}
