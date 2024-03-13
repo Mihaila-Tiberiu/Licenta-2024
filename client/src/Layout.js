@@ -4,7 +4,7 @@ import Footer from "./Footer";
 
 export default function Layout(){
     return (
-        <div className="bg-white">
+        <div className="bg-gray-100">
             <Header />
             <Outlet />
             <Footer />

@@ -28,12 +28,12 @@ export default function AccountPage() {
     }
 
     function colorClasses(type=null){
-        let classes = 'inline-flex gap-1 py-2 px-6 rounded-full';
+        let classes = 'inline-flex gap-1 py-2 px-6 rounded';
         if (type === subpage || (subpage === undefined && type === 'profile' )) {
-            classes += ' bg-primary text-white';
+            classes += ' bg-primary text-white hover:bg-green-900';
         }
         else {
-            classes += ' bg-gray-200'
+            classes += ' bg-gray-200 hover:bg-gray-300'
         }
         return classes;
     } 
@@ -43,7 +43,7 @@ export default function AccountPage() {
     }
     return(
         <div>
-            <div className="w-full flex justify-center mt-5 gap-2 mb-8 sticky top-0">
+            <div className="w-full flex justify-center mt-5 gap-2 mb-8 top-0">
                 <Link className={colorClasses('profile')} to={'/account'}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
@@ -65,9 +65,9 @@ export default function AccountPage() {
             </div>
             <div className="relative">
             {subpage === 'profile' && (
-                <div className="text-center">
+                <div className="text-center mb-40">
                     Autentificat ca {user.Username} ({user.Email}) <br/>
-                    <button onClick={logout} className="py-2 px-6 mt-2 bg-primary text-white rounded-full">Ieși din cont</button>
+                    <button onClick={logout} className="py-2 px-6 mt-2 bg-primary text-white rounded hover:bg-green-900">Ieși din cont</button>
                 </div>
             )}
             {subpage === 'places' && (

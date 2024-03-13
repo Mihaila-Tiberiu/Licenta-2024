@@ -37,7 +37,7 @@ export default function LoginPage(){
              value= {username} onChange={ev => setUsername(ev.target.value)}/>
             <input type="password" placeholder="parola"
              value= {password} onChange={ev => setPassword(ev.target.value)}/>
-            <button className="bg-primary w-full border my-2 py-2 px-3 rounded-2xl text-white font-medium">Autentifică-te</button>
+            <button className="bg-primary w-full border my-2 py-2 px-3 rounded text-white font-medium">Autentifică-te</button>
             <div className='text-center py-2 text-gray-500'>
                Nu ai cont? <Link className='text-center py-2 text-black underline' to={'/register'}>Înregistrează-te</Link>
             </div>

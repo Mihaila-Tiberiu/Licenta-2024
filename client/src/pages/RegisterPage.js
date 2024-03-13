@@ -44,7 +44,7 @@ export default function RegisterPage(){
             <input type="password" placeholder="parola"
                 value={password}
                 onChange={ev=>setPassword(ev.target.value)}/>
-            <button className="bg-primary w-full border my-2 py-2 px-3 rounded-2xl text-white font-medium">Înregistrează-te</button>
+            <button className="bg-primary w-full border my-2 py-2 px-3 rounded text-white font-medium">Înregistrează-te</button>
             <div className='text-center py-2 text-gray-500'>
                Ai deja cont? <Link className='text-center py-2 text-black underline' to={'/login'}>Autentifică-te</Link>
             </div>
