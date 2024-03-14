@@ -12,7 +12,7 @@ export default function Header(){
           <ul className="flex space-x-4 mx-auto">
             <div className="flex rounded items-center text-lg">
                 <li><a href="/" className="hover:text-gray-300 border-r-2 pr-2">Acasă</a></li>
-                <li><a href="#" className="hover:text-gray-300 border-r-2 ml-2 pr-2">Locații</a></li>
+                <li><a href="#" className="hover:text-gray-300 border-r-2 ml-2 pr-2">Caută locații</a></li>
                 <li><a href="#" className="hover:text-gray-300 border-r-2 ml-2 pr-2">Despre noi</a></li>
                 <li><a href="#" className="hover:text-gray-300 ml-2">Contact</a></li>
             </div>
@@ -21,11 +21,11 @@ export default function Header(){
                 <div className='flex justify-end '>
                     <Link to={user ? '/account' : '/login'} className='flex items-center gap-2 rounded p-2 hover:text-gray-300'>
                     {user && (
-                      <div className='flex hover:text-gray-300 hover:border-gray-300'>
+                      <div className='flex'>
                         <div className='mr-2'>
                           {user.Username}
                         </div>
-                        <div className='rounded-full border-2 border-white p-1 hover:text-gray-300 hover:border-gray-300'>
+                        <div className='rounded-full border-2 border-gray-300 p-1 hover:text-gray-300 '>
                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
                           </svg>

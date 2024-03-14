@@ -70,9 +70,9 @@ function shuffle(array) {
   
     return array;
   }
-  const numberOfLocationsToShow = 1;
+  const numberOfLocationsToShow = 5;
   return (
-      <div className="peer-space-clone">
+      <div className="gap-5 flex">
         {shuffle(locations).slice(0, numberOfLocationsToShow).map(location => (
           <LocationCard key={location.id} location={location} />
         ))}
