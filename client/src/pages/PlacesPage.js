@@ -219,13 +219,13 @@ export default function PlacesPage(){
                     </div>
 
                     <div className="w-3/4 mx-auto">
-                        <h2 className="text-center text-xl mt-4 pl-3 mb-4 font-bold">Locațiile tale</h2>
+                        <h2 className="text-center text-xl mt-4  mb-4 font-bold">Locațiile tale</h2>
                         {locations.length > 0 && locations.map(location => (
                             <Link to={'/account/places/'+location.IdLocatie} key={location.IdLocatie} className="bg-gray-200 p-4 rounded-2xl flex gap-4 mt-4 cursor-pointer">
                                 
-                                <div className="flex bg-gray-300 w-32 h-32 rounded-2xl border flex-shrink-0">
+                                <div className="flex bg-gray-300 w-48 h-48 rounded-2xl border overflow-hidden">
                                     {location.images.length > 0 && (
-                                        <img className="bg-gray-300 w-32 h-32 rounded-2xl border flex-shrink-0" src={`http://localhost:4000/uploads/${location.images[0].URLimagine}`} alt="" />
+                                        <img className="w-full h-full object-cover object-center" src={`http://localhost:4000/uploads/${location.images[0].URLimagine}`} alt="" />
                                     )}
                                 </div>
                                 <div className="">
@@ -248,39 +248,50 @@ export default function PlacesPage(){
             {action === 'new' && (
                 <div className="w-3/4 flex justify-center mx-auto">
                 <form onSubmit={addNewPlace}>
-                    <h2 className="text-xl mt-4 pl-3">Denumirea locației</h2>
+                    <h2 className="text-xl mt-4 ">Denumirea locației</h2>
                     <input type="text" value={denumire} onChange={ev=>setDenumire(ev.target.value)} placeholder="Grădină luminoasă spectaculoasă"/>
-                    <h2 className="text-xl mt-4 pl-3">Descrierea locației</h2>
+                    <h2 className="text-xl mt-4 ">Descrierea locației</h2>
                     <textarea value={descriere} onChange={ev=>setDescriere(ev.target.value)} className="w-full border my-1 py-2 px-3 rounded-2xl" placeholder="Situată la câțiva pași de plajă, această grădină..."/>
-                    <h2 className="text-xl mt-4 pl-3">Județul locației</h2>
+                    <h2 className="text-xl mt-4 ">Județul locației</h2>
                     <input value={judet} onChange={ev=>setJudet(ev.target.value)} type="text" placeholder="Călărași"/>
-                    <h2 className="text-xl mt-4 pl-3">Orașul locației</h2>
+                    <h2 className="text-xl mt-4 ">Orașul locației</h2>
                     <input value={oras} onChange={ev=>setOras(ev.target.value)} type="text" placeholder="Oltenița"/>
-                    <h2 className="text-xl mt-4 pl-3">Stradă, număr, alte detalii etc.</h2>
+                    <h2 className="text-xl mt-4 ">Stradă, număr, alte detalii etc.</h2>
                     <input type="text" value={alte} onChange={ev=>setAlte(ev.target.value)} placeholder="Bd. Republicii, Nr 109 (vis-a-vis de florăria Floriana)"/>
-                    <h2 className="text-xl mt-4 pl-3">Capacitate</h2>
+                    <h2 className="text-xl mt-4 ">Capacitate</h2>
                     <input type="number" value={capacitate} onChange={ev=>setCapacitate(ev.target.value)} placeholder="Numărul maxim de persoane"/>
-                    <h2 className="text-xl mt-4 pl-3">Prețul pe zi</h2>
+                    <h2 className="text-xl mt-4 ">Prețul pe zi</h2>
                     <input type="text" value={ppzi} onChange={ev=>setPpzi(ev.target.value)} placeholder="Exprimat în RON"/>
                     
-                    <h2 className="text-xl mt-4 pl-3">Fotografii</h2>
-                    <div className="mt-2 grid gap-2 grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-                        {addedPhotos.length > 0 && addedPhotos.map(link=>(
-                            <div className="h-32 flex" key={link}>
-                                <img className="rounded-2xl w-full object-cover" src={'http://localhost:4000/uploads/'+link} alt=''/>
+                    <h2 className="text-xl mt-4 ">Fotografii</h2>
+                    <div className="mt-2 flex flex-wrap gap-3 justify-center">
+                    {addedPhotos.length > 0 && addedPhotos.map((link, index) => (
+                        <div className="relative w-48 h-48 overflow-hidden rounded-xl" key={link}>
+                            <img className="w-full h-full object-cover" src={'http://localhost:4000/uploads/' + link} alt='' />
+                            <div className="absolute top-2 right-2 flex space-x-2">
+                                <div title="Choose cover photo">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6 cursor-pointer bg-gray-200 rounded p-1 tooltip" onClick={() => movePhotoToFront(index)} title="Choose cover photo">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z" />
+                                    </svg>
+                                </div>
+                                <div title="Delete photo">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6 cursor-pointer bg-gray-200 rounded p-1 tooltip" onClick={() => deletePhoto(index)} title="Delete photo">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                    </svg>
+                                </div>
                             </div>
-                        ))}
-                        
-                        <label className="flex items-center cursor-pointer flex border bg-transparent rounded-2xl p-8 text-2xl text-gray-600 justify-center">
-                            <input type="file" multiple className="hidden" onChange={uploadPhoto}/>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
-                            </svg>
-                        </label>
-                    </div>
+                        </div>
+                    ))}
+                    <label className="relative w-48 h-48 overflow-hidden rounded-xl cursor-pointer border bg-transparent p-8 text-2xl text-gray-600 justify-center">
+                        <input type="file" multiple className="hidden" onChange={uploadPhoto} />
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                        </svg>
+                    </label>
+                </div>
                     
-                    <h2 className="text-xl mt-4 pl-3">Facilități</h2>
-                    <p className="pl-3 text-gray-500 text-l">Selectați toate facilitățile locației</p>
+                    <h2 className="text-xl mt-4 ">Facilități</h2>
+                    <p className=" text-gray-500 text-l">Selectați toate facilitățile locației</p>
                     <div className="grid mt-2 gap-2 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
                         <label className="border p-4 flex rounded-2xl gap-2 items-center cursor-pointer">
                             <input type="checkbox" value="Afară" onChange={handleCbClick}/>
@@ -299,14 +310,14 @@ export default function PlacesPage(){
                             <span>Parcare privată 🅿️</span>
                         </label>
                     </div>
-                    <h2 className="text-xl mt-4 pl-3">Check-in și check-out</h2>
+                    <h2 className="text-xl mt-4 ">Check-in și check-out</h2>
                     <div className="grid gap-2 sm:grid-cols-3">
                         <div>
-                            <h3 className="mt-4 pl-3 -mb-1">Oră check-in</h3>
+                            <h3 className="mt-4  -mb-1">Oră check-in</h3>
                             <input type="text" value={checkIn} onChange={ev=>setCheckIn(ev.target.value)} placeholder="08:00" />
                         </div>
                         <div>
-                            <h3 className="mt-4 pl-3 -mb-1">Oră check-out</h3>
+                            <h3 className="mt-4  -mb-1">Oră check-out</h3>
                             <input type="text" value={checkOut} onChange={ev=>setCheckOut(ev.target.value)} placeholder="10:00" />
                         </div>
                     </div>
@@ -319,56 +330,50 @@ export default function PlacesPage(){
             {!isNaN(parseInt(action)) && (
                 <div className="w-3/4 flex justify-center mx-auto">
                 <form onSubmit={editPlace}>
-                    <h2 className="text-xl mt-4 pl-3">Denumirea locației</h2>
+                    <h2 className="text-xl mt-4 ">Denumirea locației</h2>
                     <input type="text" value={denumire} onChange={ev=>setDenumire(ev.target.value)} placeholder="Grădină luminoasă spectaculoasă"/>
-                    <h2 className="text-xl mt-4 pl-3">Descrierea locației</h2>
+                    <h2 className="text-xl mt-4 ">Descrierea locației</h2>
                     <textarea value={descriere} onChange={ev=>setDescriere(ev.target.value)} className="w-full border my-1 py-2 px-3 rounded-2xl" placeholder="Situată la câțiva pași de plajă, această grădină..."/>
-                    <h2 className="text-xl mt-4 pl-3">Județul locației</h2>
+                    <h2 className="text-xl mt-4 ">Județul locației</h2>
                     <input value={judet} onChange={ev=>setJudet(ev.target.value)} type="text" placeholder="Călărași"/>
-                    <h2 className="text-xl mt-4 pl-3">Orașul locației</h2>
+                    <h2 className="text-xl mt-4 ">Orașul locației</h2>
                     <input value={oras} onChange={ev=>setOras(ev.target.value)} type="text" placeholder="Oltenița"/>
-                    <h2 className="text-xl mt-4 pl-3">Stradă, număr, alte detalii etc.</h2>
+                    <h2 className="text-xl mt-4 ">Stradă, număr, alte detalii etc.</h2>
                     <input type="text" value={alte} onChange={ev=>setAlte(ev.target.value)} placeholder="Bd. Republicii, Nr 109 (vis-a-vis de florăria Floriana)"/>
-                    <h2 className="text-xl mt-4 pl-3">Capacitate</h2>
+                    <h2 className="text-xl mt-4 ">Capacitate</h2>
                     <input type="number" value={capacitate} onChange={ev=>setCapacitate(ev.target.value)} placeholder="Numărul maxim de persoane"/>
-                    <h2 className="text-xl mt-4 pl-3">Prețul pe zi</h2>
+                    <h2 className="text-xl mt-4 ">Prețul pe zi</h2>
                     <input type="text" value={ppzi} onChange={ev=>setPpzi(ev.target.value)} placeholder="Exprimat în RON"/>
                     
-                    <h2 className="text-xl mt-4 pl-3">Fotografii</h2>
-                    <div className="mt-2 grid gap-2 grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-                        {addedPhotos.length > 0 && addedPhotos.map((link, index) => (
-                            <div className="relative" key={link}>
-                                <img className="rounded-2xl w-full object-cover" src={'http://localhost:4000/uploads/' + link} alt='' />
-                                <div className="absolute top-2 right-2 flex space-x-2">
-                                    <div title="Alege ca thumbnail">
+                    <h2 className="text-xl mt-4 ">Fotografii</h2>
+                    <div className="mt-2 flex flex-wrap gap-3 justify-center">
+                    {addedPhotos.length > 0 && addedPhotos.map((link, index) => (
+                        <div className="relative w-48 h-48 overflow-hidden rounded-xl" key={link}>
+                            <img className="w-full h-full object-cover" src={'http://localhost:4000/uploads/' + link} alt='' />
+                            <div className="absolute top-2 right-2 flex space-x-2">
+                                <div title="Choose cover photo">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6 cursor-pointer bg-gray-200 rounded p-1 tooltip" onClick={() => movePhotoToFront(index)} title="Choose cover photo">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z" />
                                     </svg>
-
-                                    </div>
-                                    <div title="Șterge fotografia">
+                                </div>
+                                <div title="Delete photo">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6 cursor-pointer bg-gray-200 rounded p-1 tooltip" onClick={() => deletePhoto(index)} title="Delete photo">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
                                     </svg>
-
-                                    </div>
                                 </div>
                             </div>
-                        ))}
+                        </div>
+                    ))}
+                    <label className="relative w-48 h-48 overflow-hidden rounded-xl cursor-pointer border bg-transparent p-8 text-2xl text-gray-600 justify-center">
+                        <input type="file" multiple className="hidden" onChange={uploadPhoto} />
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                        </svg>
+                    </label>
+                </div>
 
-                        <label className="flex items-center cursor-pointer border bg-transparent rounded-2xl p-8 text-2xl text-gray-600 justify-center">
-                            <input type="file" multiple className="hidden" onChange={uploadPhoto} />
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
-                            </svg>
-                        </label>
-                    </div>
-
-
-
-                    
-                    <h2 className="text-xl mt-4 pl-3">Facilități</h2>
-                    <p className="pl-3 text-gray-500 text-l">Selectați toate facilitățile locației</p>
+                    <h2 className="text-xl mt-4 ">Facilități</h2>
+                    <p className=" text-gray-500 text-l">Selectați toate facilitățile locației</p>
                     <div className="grid mt-2 gap-2 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
                         <label className="border p-4 flex rounded-2xl gap-2 items-center cursor-pointer">
                             <input type="checkbox" checked={facilitati.includes("Afară")} value="Afară" onChange={handleCbClick}/>
@@ -387,14 +392,14 @@ export default function PlacesPage(){
                             <span>Parcare privată 🅿️</span>
                         </label>
                     </div>
-                    <h2 className="text-xl mt-4 pl-3">Check-in și check-out</h2>
+                    <h2 className="text-xl mt-4 ">Check-in și check-out</h2>
                     <div className="grid gap-2 sm:grid-cols-3">
                         <div>
-                            <h3 className="mt-4 pl-3 -mb-1">Oră check-in</h3>
+                            <h3 className="mt-4  -mb-1">Oră check-in</h3>
                             <input type="text" value={checkIn} onChange={ev=>setCheckIn(ev.target.value)} placeholder="08:00" />
                         </div>
                         <div>
-                            <h3 className="mt-4 pl-3 -mb-1">Oră check-out</h3>
+                            <h3 className="mt-4  -mb-1">Oră check-out</h3>
                             <input type="text" value={checkOut} onChange={ev=>setCheckOut(ev.target.value)} placeholder="10:00" />
                         </div>
                     </div>

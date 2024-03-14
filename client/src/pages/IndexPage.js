@@ -1,4 +1,4 @@
-import CityCarousel from "../CityCarousel";
+import CustomizableLocationCard from "../CustomizableLocationCard";
 import Header from "../Header";
 
 export default function IndexPage(){
@@ -19,7 +19,7 @@ export default function IndexPage(){
       </header>
       <section className="container mx-auto py-10">
       <h2 className="text-4xl font-bold mb-4 flex justify-center text-primary"> Găsește locații minunate în orice oraș din România</h2>
-        <CityCarousel />
+        <CustomizableLocationCard city={'Bucuresti'} />
       </section>
     </div>
     );
