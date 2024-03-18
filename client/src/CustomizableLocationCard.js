@@ -16,10 +16,9 @@ const LocationCard = ({ location }) => (
     </div>
     <div className="location-details">
       <h2>{location.Nume}</h2>
-      <p>{location.Descriere}</p>
       <p>{location.Oras}, {location.Judet}</p>
       <p>Pret: {location.PretPeZi} RON pe zi</p>
-      <p>Capacitate: {location.Capacitate}</p>
+      <p>Capacitate: {location.Capacitate} pers</p>
       <p>Rating: {location.Rating === 0 ? 'Neevaluat' : `${location.Rating} ⭐`}</p>
     </div>
   </div>
