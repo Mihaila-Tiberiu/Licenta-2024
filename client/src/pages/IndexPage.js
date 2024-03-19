@@ -15,13 +15,17 @@ export default function IndexPage(){
   const [endDate, setEndDate] = useState(null);
   const [startDateFormatted, setStartDateFormatted] = useState(null);
   const [endDateFormatted, setEndDateFormatted] = useState(null);
+  const [lastClickedCounty, setLastClickedCounty] = useState(null);
+  const [lastClickedEventType, setLastClickedEventType] = useState(null);
 
   const handleCountySelect = (selectedCounty) => {
     setCounty(selectedCounty);
+    setLastClickedCounty(selectedCounty);
   };
 
   const handleEventTypeSelect = (selectedEventType) => {
     setEventType(selectedEventType);
+    setLastClickedEventType(selectedEventType);
   };
 
   const handleStartDateChange = (date) => {
@@ -40,7 +44,7 @@ export default function IndexPage(){
 
   const handleSearch = () => {
     // Redirect to locations page with parameters
-    navigate(`/locations?county=${county}&eventType=${eventType}&startDate=${startDateFormatted}&endDate=${endDateFormatted}`);
+    navigate(`/locations?fromLTU=True?county=${county === '' ? null : county}&eventType=${eventType === '' ? null : eventType}&startDate=${startDateFormatted}&endDate=${endDateFormatted}`);
   };
 
 
@@ -59,49 +63,87 @@ export default function IndexPage(){
             </p>
         </div>
       </header>
-      <section className="container mx-auto py-10">
-      <h2 className="text-4xl font-bold mb-4 flex justify-center text-primary"> Găsește locații minunate în orice județ din România</h2>
-        <div className="">
-          <div className="select-section">
-            <h2>Select your county:</h2>
-            <div className="county-bubbles">
-              <button onClick={() => handleCountySelect('Bucharest')}>Bucharest</button>
-              <button onClick={() => handleCountySelect('Cluj')}>Cluj</button>
-              <button onClick={() => handleCountySelect('Brasov')}>Brasov</button>
-              <button onClick={() => handleCountySelect('Constanta')}>Constanta</button>
-              <button onClick={() => handleCountySelect('Prahova')}>Prahova</button>
-              {/* Add more county buttons as needed */}
+      <div className="container mx-auto mt-20">
+        <div className="flex flex-wrap justify-center">
+          <div className="w-full md:w-1/3 px-4">
+            <div className="select-section bg-white rounded-lg shadow-xl p-6 mb-6">
+              <h2 className="text-lg font-bold mb-4">Selectează județul:</h2>
+              <div className="county-bubbles flex flex-wrap mb-4">
+                <button
+                  className={`${lastClickedCounty === 'Bucharest' ? 'bg-gray-400' : 'bg-gray-200'} hover:bg-gray-300 font-semibold py-2 px-4 rounded mr-2 mb-2`}
+                  onClick={() => handleCountySelect('Bucharest')}
+                >
+                  Bucharest
+                </button>
+                <button
+                  className={`${lastClickedCounty === 'Cluj' ? 'bg-gray-400' : 'bg-gray-200'} hover:bg-gray-300 font-semibold py-2 px-4 rounded mr-2 mb-2`}
+                  onClick={() => handleCountySelect('Cluj')}
+                >
+                  Cluj
+                </button>
+                <button
+                  className={`${lastClickedCounty === 'Brasov' ? 'bg-gray-400' : 'bg-gray-200'} hover:bg-gray-300 font-semibold py-2 px-4 rounded mr-2 mb-2`}
+                  onClick={() => handleCountySelect('Brasov')}
+                >
+                  Brasov
+                </button>
+                <button
+                  className={`${lastClickedCounty === 'Constanta' ? 'bg-gray-400' : 'bg-gray-200'} hover:bg-gray-300 font-semibold py-2 px-4 rounded mr-2 mb-2`}
+                  onClick={() => handleCountySelect('Constanta')}
+                >
+                  Constanta
+                </button>
+                <button
+                  className={`${lastClickedCounty === 'Prahova' ? 'bg-gray-400' : 'bg-gray-200'} hover:bg-gray-300 font-semibold py-2 px-4 rounded mr-2 mb-2`}
+                  onClick={() => handleCountySelect('Prahova')}
+                >
+                  Prahova
+                </button>
+              </div>
             </div>
           </div>
 
-          <div className="select-section">
-            <h2>Select your event type:</h2>
-            <div className="event-type-bubbles">
-              <button onClick={() => handleEventTypeSelect('Wedding')}>Wedding</button>
-              <button onClick={() => handleEventTypeSelect('Corporate')}>Corporate</button>
-              {/* Add more event type buttons as needed */}
+          <div className="w-full md:w-1/3 px-4">
+            <div className="select-section bg-white rounded-lg shadow-xl p-6 mb-6">
+              <h2 className="text-lg font-bold mb-4">Selectează tipul de eveniment:</h2>
+                <div className="event-type-bubbles mb-4">
+                  <button
+                    className={`${lastClickedEventType === 'Wedding' ? 'bg-gray-400' : 'bg-gray-200'} hover:bg-gray-300 font-semibold py-2 px-4 rounded mr-2 mb-2`}
+                    onClick={() => handleEventTypeSelect('Wedding')}
+                  >
+                    Wedding
+                  </button>
+                  <button
+                    className={`${lastClickedEventType === 'Corporate' ? 'bg-gray-400' : 'bg-gray-200'} hover:bg-gray-300 font-semibold py-2 px-4 rounded mr-2 mb-2`}
+                    onClick={() => handleEventTypeSelect('Corporate')}
+                  >
+                    Corporate
+                  </button>
+                </div>
             </div>
           </div>
 
-          <div className="select-section">
-            <h2>Select your date range:</h2>
-            <DateRangePicker
-              startDate={startDate}
-              endDate={endDate}
-              handleStartDateChange={handleStartDateChange}
-              handleEndDateChange={handleEndDateChange}
-            />
-          </div>
-
-          <button onClick={handleSearch}>Look them up!</button>
-
-          <div className="additional-options">
-            <p>Need more accuracy? Use our detailed search!</p>
-            <button onClick={() => navigate('/locations')}>Go to detailed search</button>
+          <div className="w-full md:w-1/3 px-4">
+            <div className="select-section bg-white rounded-lg shadow-xl p-6 mb-6">
+              <h2 className="text-lg font-bold mb-4 pl-5">Selectează datele:</h2>
+              <DateRangePicker
+                    startDate={startDate}
+                    endDate={endDate}
+                    handleStartDateChange={handleStartDateChange}
+                    handleEndDateChange={handleEndDateChange}
+                  />
+            </div>
           </div>
         </div>
 
-      </section>
+        <div className="text-center mt-4">
+          <button className="bg-primary hover:bg-green-900 text-white font-bold py-2 px-4 rounded" onClick={handleSearch}>Efectuează căutarea!</button>
+        </div>
+
+        <div className="text-center mt-24">
+          <p className="text-gray-700">Vrei să realizezi o căutare mai detaliată? Folosește <a className="text-primary underline font-semibold hover:text-green-900" href="/locations">căutarea detaliată!</a></p>
+        </div>
+      </div>
     </div>
     );
 }
