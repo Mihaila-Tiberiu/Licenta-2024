@@ -42,7 +42,7 @@ export default function AccountPage() {
         return <Navigate to={redirect} />
     }
     return(
-        <div>
+        <div className="min-h-screen">
             <div className="w-full flex justify-center mt-5 gap-2 mb-8 top-0">
                 <Link className={colorClasses('profile')} to={'/account'}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">

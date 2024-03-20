@@ -1,4 +1,3 @@
-import CustomizableLocationCard from "../CustomizableLocationCard";
 import Header from "../Header";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -66,9 +65,9 @@ export default function IndexPage(){
       <div className="container mx-auto mt-20">
         <div className="flex flex-wrap justify-center">
           <div className="w-full md:w-1/3 px-4">
-            <div className="select-section bg-white rounded-lg shadow-xl p-6 mb-6">
+            <div className="select-section bg-white rounded-lg shadow-xl p-6 mb-6 border-gray-300 border-2">
               <h2 className="text-lg font-bold mb-4">Selectează județul:</h2>
-              <div className="county-bubbles flex flex-wrap mb-4">
+              <div className="county-bubbles flex flex-wrap mb-4 ">
                 <button
                   className={`${lastClickedCounty === 'Bucharest' ? 'bg-gray-400' : 'bg-gray-200'} hover:bg-gray-300 font-semibold py-2 px-4 rounded mr-2 mb-2`}
                   onClick={() => handleCountySelect('Bucharest')}
@@ -104,7 +103,7 @@ export default function IndexPage(){
           </div>
 
           <div className="w-full md:w-1/3 px-4">
-            <div className="select-section bg-white rounded-lg shadow-xl p-6 mb-6">
+            <div className="select-section bg-white rounded-lg shadow-xl p-6 mb-6 border-gray-300 border-2">
               <h2 className="text-lg font-bold mb-4">Selectează tipul de eveniment:</h2>
                 <div className="event-type-bubbles mb-4">
                   <button
@@ -124,7 +123,7 @@ export default function IndexPage(){
           </div>
 
           <div className="w-full md:w-1/3 px-4">
-            <div className="select-section bg-white rounded-lg shadow-xl p-6 mb-6">
+            <div className="select-section bg-white rounded-lg shadow-xl p-6 mb-6 border-gray-300 border-2">
               <h2 className="text-lg font-bold mb-4 pl-5">Selectează datele:</h2>
               <DateRangePicker
                     startDate={startDate}

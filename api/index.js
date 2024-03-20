@@ -332,4 +332,19 @@ app.get('/locationsByCity', (req, res) => {
 });
   
 
+// Delete location endpoint
+app.delete('/deleteLocation/:locationId', (req, res) => {
+    const locationId = req.params.locationId;
 
+    const sql = `DELETE FROM Locatii WHERE IdLocatie = ?`;
+
+    db.run(sql, [locationId], (err, result) => {
+        if (err) {
+            console.error('Error deleting location: ', err);
+            res.status(500).json({ error: 'Internal Server Error' });
+            return;
+        }
+        console.log('Location deleted successfully');
+        res.sendStatus(200);
+    });
+});

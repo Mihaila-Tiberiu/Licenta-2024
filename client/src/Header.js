@@ -40,7 +40,7 @@ export default function Header(){
                     )}
                     {!user && (
                       <div className='rounded-full p-1 hover:text-gray-300 hover:border-gray-300'>
-                          Autentificați-vă
+                          Autentifică-te
                       </div>
                     )} 
                     </Link>
