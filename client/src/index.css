@@ -21,3 +21,15 @@ body{
 .object-center {
     object-position: center;
 }
+
+.stdropdown-tools{
+    @apply invisible;
+}
+
+.stdropdown-container{
+    @apply w-full
+}
+
+.stdropdown-container input{
+    @apply w-full border my-2 py-2 px-3 rounded;
+}

@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { useContext } from "react";
 import { UserContext } from "../UserContext";
+import { CitySelect, StateSelect, CountrySelect} from 'react-country-state-city';
 
 export default function PlacesPage(){
     const {action} = useParams();
@@ -20,6 +21,9 @@ export default function PlacesPage(){
     const [checkIn, setCheckIn] = useState('');
     const [checkOut, setCheckOut] = useState('');
     const [redirect, setRedirect] = useState('');
+    
+    const countryid = 181;
+    const [stateId, setStateId] = useState(0);
 
     const { user } = useContext(UserContext);
 
@@ -274,10 +278,27 @@ export default function PlacesPage(){
                     <input type="text" value={denumire} onChange={ev=>setDenumire(ev.target.value)} placeholder="Grădină luminoasă spectaculoasă"/>
                     <h2 className="text-xl mt-4 ">Descrierea locației</h2>
                     <textarea value={descriere} onChange={ev=>setDescriere(ev.target.value)} className="w-full border my-1 py-2 px-3 rounded-2xl" placeholder="Situată la câțiva pași de plajă, această grădină..."/>
-                    <h2 className="text-xl mt-4 ">Județul locației</h2>
-                    <input value={judet} onChange={ev=>setJudet(ev.target.value)} type="text" placeholder="Călărași"/>
-                    <h2 className="text-xl mt-4 ">Orașul locației</h2>
-                    <input value={oras} onChange={ev=>setOras(ev.target.value)} type="text" placeholder="Oltenița"/>
+                    <div>
+                        <h2 className="text-xl mt-4 ">Județul locației</h2>
+                        <StateSelect
+                            className="!w-full !border !my-2 !py-2 !px-3 !rounded"
+                            countryid={countryid}
+                            onChange={(e) => {
+                                setStateId(e.id);
+                                setJudet(e.name);
+                            }}
+                            placeHolder="Călărași"
+                        />
+                        <h2 className="text-xl mt-4 ">Orașul locației</h2>
+                        <CitySelect
+                            countryid={countryid}
+                            stateid={stateId}
+                            onChange={(e) => {
+                                setOras(e.name);
+                            }}
+                            placeHolder="Oltenița"
+                        />
+                    </div>
                     <h2 className="text-xl mt-4 ">Stradă, număr, alte detalii etc.</h2>
                     <input type="text" value={alte} onChange={ev=>setAlte(ev.target.value)} placeholder="Bd. Republicii, Nr 109 (vis-a-vis de florăria Floriana)"/>
                     <h2 className="text-xl mt-4 ">Capacitate</h2>
@@ -356,10 +377,27 @@ export default function PlacesPage(){
                     <input type="text" value={denumire} onChange={ev=>setDenumire(ev.target.value)} placeholder="Grădină luminoasă spectaculoasă"/>
                     <h2 className="text-xl mt-4 ">Descrierea locației</h2>
                     <textarea value={descriere} onChange={ev=>setDescriere(ev.target.value)} className="w-full border my-1 py-2 px-3 rounded-2xl" placeholder="Situată la câțiva pași de plajă, această grădină..."/>
-                    <h2 className="text-xl mt-4 ">Județul locației</h2>
-                    <input value={judet} onChange={ev=>setJudet(ev.target.value)} type="text" placeholder="Călărași"/>
-                    <h2 className="text-xl mt-4 ">Orașul locației</h2>
-                    <input value={oras} onChange={ev=>setOras(ev.target.value)} type="text" placeholder="Oltenița"/>
+                    <div>
+                        <h2 className="text-xl mt-4 ">Județul locației</h2>
+                        <StateSelect
+                            className="!w-full !border !my-2 !py-2 !px-3 !rounded"
+                            countryid={countryid}
+                            onChange={(e) => {
+                                setStateId(e.id);
+                                setJudet(e.name);
+                            }}
+                            placeHolder="Călărași"
+                        />
+                        <h2 className="text-xl mt-4 ">Orașul locației</h2>
+                        <CitySelect
+                            countryid={countryid}
+                            stateid={stateId}
+                            onChange={(e) => {
+                                setOras(e.name);
+                            }}
+                            placeHolder="Oltenița"
+                        />
+                    </div>
                     <h2 className="text-xl mt-4 ">Stradă, număr, alte detalii etc.</h2>
                     <input type="text" value={alte} onChange={ev=>setAlte(ev.target.value)} placeholder="Bd. Republicii, Nr 109 (vis-a-vis de florăria Floriana)"/>
                     <h2 className="text-xl mt-4 ">Capacitate</h2>
