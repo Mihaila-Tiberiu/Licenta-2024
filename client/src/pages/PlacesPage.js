@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { useContext } from "react";
 import { UserContext } from "../UserContext";
-import { CitySelect, StateSelect, CountrySelect} from 'react-country-state-city';
+import { CitySelect, StateSelect } from 'react-country-state-city';
 
 export default function PlacesPage(){
     const {action} = useParams();
@@ -38,7 +38,6 @@ export default function PlacesPage(){
             console.error('Error fetching user locations:', error);
           }
         };
-    
         fetchUserLocations();
       }, [user.IdUtilizator]);
 

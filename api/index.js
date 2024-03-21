@@ -304,32 +304,6 @@ app.post('/editLocation', (req, res) => {
                 });
             });
 });
-
-// Endpoint to fetch locations with images for a specific city
-app.get('/locationsByCity', (req, res) => {
-    const { city } = req.query;
-
-    // Query to fetch locations with their corresponding images
-    const query = `
-        SELECT 
-        L.*, 
-        (SELECT I.URLImagine FROM Imagini AS I WHERE L.IdLocatie = I.IdLocatie ORDER BY I.IdImagine ASC LIMIT 1) AS imageURL 
-    FROM 
-        Locatii AS L 
-    WHERE 
-        L.Oras = ?
-    `;
-
-    db.all(query, [city], (err, rows) => {
-        if (err) {
-        console.error('Error fetching locations:', err);
-        res.status(500).json({ error: 'Internal server error' });
-        return;
-        }
-
-        res.json(rows);
-    });
-});
   
 
 // Delete location endpoint

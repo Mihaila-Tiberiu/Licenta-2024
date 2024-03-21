@@ -1,9 +1,8 @@
-import Header from "../Header";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { DateRangePicker } from "../DateRangePicker";
 import 'react-datepicker/dist/react-datepicker.css';
-import {format, setDate} from 'date-fns'
+import {format} from 'date-fns'
 
 export default function IndexPage(){
 
@@ -42,8 +41,16 @@ export default function IndexPage(){
   };
 
   const handleSearch = () => {
-    // Redirect to locations page with parameters
-    navigate(`/locations?fromLTU=True?county=${county === '' ? null : county}&eventType=${eventType === '' ? null : eventType}&startDate=${startDateFormatted}&endDate=${endDateFormatted}`);
+    // Redirect to listings page with parameters
+    navigate(`/listings?Judet=${county === '' ? null : county}`
+    +`&Capacitate=${eventType === '' ? null : eventType}`
+    +`&startDate=${startDateFormatted}`
+    +`&endDate=${endDateFormatted}`
+    +`&WordsInDescription=${null}`
+    +`&WordsInFacilities=${null}`
+    +`&Rating=${null}`
+    +`&PretPeZi=${null}`
+    +`&Oras=${null}`);
   };
 
 
@@ -54,10 +61,10 @@ export default function IndexPage(){
         <div className="container mx-auto">
           
             <h2 className="text-4xl font-bold mb-4"> 
-            <a href="#" className="hover:text-gray-300">Găsește locul ideal pentru ocazia ta.</a>
+            <a href="/" className="hover:text-gray-300">Găsește locul ideal pentru ocazia ta.</a>
             </h2>
             <p className="text-lg">
-            <a href="#" className="hover:text-gray-300">
+            <a href="/listings" className="hover:text-gray-300">
             Descoperă locații inedite pentru evenimentele tale.</a>
             </p>
         </div>
@@ -75,28 +82,22 @@ export default function IndexPage(){
                   Bucharest
                 </button>
                 <button
-                  className={`${lastClickedCounty === 'Cluj' ? 'bg-gray-400' : 'bg-gray-200'} hover:bg-gray-300 font-semibold py-2 px-4 rounded mr-2 mb-2`}
-                  onClick={() => handleCountySelect('Cluj')}
+                  className={`${lastClickedCounty === 'Cluj County' ? 'bg-gray-400' : 'bg-gray-200'} hover:bg-gray-300 font-semibold py-2 px-4 rounded mr-2 mb-2`}
+                  onClick={() => handleCountySelect('Cluj County')}
                 >
                   Cluj
                 </button>
                 <button
-                  className={`${lastClickedCounty === 'Brasov' ? 'bg-gray-400' : 'bg-gray-200'} hover:bg-gray-300 font-semibold py-2 px-4 rounded mr-2 mb-2`}
-                  onClick={() => handleCountySelect('Brasov')}
+                  className={`${lastClickedCounty === 'Brașov County' ? 'bg-gray-400' : 'bg-gray-200'} hover:bg-gray-300 font-semibold py-2 px-4 rounded mr-2 mb-2`}
+                  onClick={() => handleCountySelect('Brașov County')}
                 >
-                  Brasov
+                  Brașov
                 </button>
                 <button
-                  className={`${lastClickedCounty === 'Constanta' ? 'bg-gray-400' : 'bg-gray-200'} hover:bg-gray-300 font-semibold py-2 px-4 rounded mr-2 mb-2`}
-                  onClick={() => handleCountySelect('Constanta')}
+                  className={`${lastClickedCounty === 'Constanța County' ? 'bg-gray-400' : 'bg-gray-200'} hover:bg-gray-300 font-semibold py-2 px-4 rounded mr-2 mb-2`}
+                  onClick={() => handleCountySelect('Constanța County')}
                 >
-                  Constanta
-                </button>
-                <button
-                  className={`${lastClickedCounty === 'Prahova' ? 'bg-gray-400' : 'bg-gray-200'} hover:bg-gray-300 font-semibold py-2 px-4 rounded mr-2 mb-2`}
-                  onClick={() => handleCountySelect('Prahova')}
-                >
-                  Prahova
+                  Constanța
                 </button>
               </div>
             </div>
@@ -107,14 +108,14 @@ export default function IndexPage(){
               <h2 className="text-lg font-bold mb-4">Selectează tipul de eveniment:</h2>
                 <div className="event-type-bubbles mb-4">
                   <button
-                    className={`${lastClickedEventType === 'Wedding' ? 'bg-gray-400' : 'bg-gray-200'} hover:bg-gray-300 font-semibold py-2 px-4 rounded mr-2 mb-2`}
-                    onClick={() => handleEventTypeSelect('Wedding')}
+                    className={`${lastClickedEventType === '120' ? 'bg-gray-400' : 'bg-gray-200'} hover:bg-gray-300 font-semibold py-2 px-4 rounded mr-2 mb-2`}
+                    onClick={() => handleEventTypeSelect('120')}
                   >
                     Wedding
                   </button>
                   <button
-                    className={`${lastClickedEventType === 'Corporate' ? 'bg-gray-400' : 'bg-gray-200'} hover:bg-gray-300 font-semibold py-2 px-4 rounded mr-2 mb-2`}
-                    onClick={() => handleEventTypeSelect('Corporate')}
+                    className={`${lastClickedEventType === '100' ? 'bg-gray-400' : 'bg-gray-200'} hover:bg-gray-300 font-semibold py-2 px-4 rounded mr-2 mb-2`}
+                    onClick={() => handleEventTypeSelect('100')}
                   >
                     Corporate
                   </button>
@@ -140,7 +141,7 @@ export default function IndexPage(){
         </div>
 
         <div className="text-center mt-24">
-          <p className="text-gray-700">Vrei să realizezi o căutare mai detaliată? Folosește <a className="text-primary underline font-semibold hover:text-green-900" href="/locations">căutarea detaliată!</a></p>
+          <p className="text-gray-700">Vrei să realizezi o căutare mai detaliată? Folosește <a className="text-primary underline font-semibold hover:text-green-900" href="/listings">căutarea detaliată!</a></p>
         </div>
       </div>
     </div>
