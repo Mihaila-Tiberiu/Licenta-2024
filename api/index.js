@@ -304,7 +304,141 @@ app.post('/editLocation', (req, res) => {
                 });
             });
 });
-  
+
+async function filterLocations(req, res) {
+    try {
+        const { Judet, MinCapacitate, MinRating, MaxPretPeZi, Oras, WordsInDescription, WordsInFacilities, startDate, endDate } = req.query;
+
+        let sql = `SELECT * FROM Locatii WHERE 1=1`;
+        const params = [];
+
+        if (Judet) {
+            sql += ` AND Judet LIKE ?`;
+            params.push(Judet);
+        }
+        if (MinCapacitate) {
+            sql += ` AND Capacitate >= ?`;
+            params.push(parseInt(MinCapacitate));
+        }
+        if (MinRating) {
+            sql += ` AND Rating >= ?`;
+            params.push(parseFloat(MinRating));
+        }
+        if (MaxPretPeZi) {
+            sql += ` AND PretPeZi <= ?`;
+            params.push(parseFloat(MaxPretPeZi));
+        }
+        if (Oras) {
+            sql += ` AND Oras LIKE ?`;
+            params.push(Oras);
+        }
+        if (WordsInDescription) {
+            sql += ` AND (${WordsInDescription.split(',').map(() => "Descriere LIKE ?").join(' OR ')})`;
+            WordsInDescription.split(',').forEach(word => {
+                params.push(`%${word}%`);
+            });
+        }
+        if (WordsInFacilities) {
+            sql += ` AND (${WordsInFacilities.split(',').map(() => "Facilitati LIKE ?").join(' OR ')})`;
+            WordsInFacilities.split(',').forEach(word => {
+                params.push(`%${word}%`);
+            });
+        }
+
+        const rows = await getAllLocations(sql, params);
+
+        if (startDate || endDate) {
+            const filteredLocations = await filterLocationsByDate(rows, startDate, endDate);
+            res.json(filteredLocations);
+        } else {
+            res.json(rows);
+        }
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+
+async function getAllLocations(sql, params) {
+    return new Promise((resolve, reject) => {
+        db.all(sql, params, (err, rows) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(rows);
+            }
+        });
+    });
+}
+
+async function filterLocationsByDate(locations, startDate, endDate) {
+    const filteredLocations = [];
+
+    for (const location of locations) {
+        const reservations = await getReservationsForLocation(location.IdLocatie);
+        const overlaps = reservations.some(reservation => checkOverlap(reservation, startDate, endDate));
+
+        if (!overlaps) {
+            filteredLocations.push(location);
+        }
+    }
+
+    return filteredLocations;
+}
+
+async function getReservationsForLocation(locationId) {
+    const reservationsQuery = `SELECT * FROM Rezervari WHERE LocatiiIdLocatie2 = ?`;
+
+    return new Promise((resolve, reject) => {
+        db.all(reservationsQuery, [locationId], (err, reservations) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(reservations);
+            }
+        });
+    });
+}
+
+function checkOverlap(reservation, startDate, endDate) {
+    if (!startDate || !endDate) {
+        return false;
+    }
+
+    const parts1 = reservation.CheckInDate.split('-');
+    const day1 = parseInt(parts1[0], 10);
+    const month1 = parseInt(parts1[1], 10) - 1; // Subtract 1 because months are zero-based
+    const year1 = parseInt(parts1[2], 10)
+    const reservationStartDate = new Date(year1, month1, day1);
+
+    const parts2 = reservation.CheckOutDate.split('-');
+    const day2 = parseInt(parts2[0], 10);
+    const month2 = parseInt(parts2[1], 10) - 1; // Subtract 1 because months are zero-based
+    const year2 = parseInt(parts2[2], 10);
+    const reservationEndDate = new Date(year2, month2, day2);
+
+    const parts3 = startDate.split('-');
+    const day3 = parseInt(parts3[0], 10);
+    const month3 = parseInt(parts3[1], 10) - 1; // Subtract 1 because months are zero-based
+    const year3 = parseInt(parts3[2], 10);
+    const filterStartDate = new Date(year3, month3, day3);
+
+    // Parse endDate into its components
+    const parts4 = endDate.split('-');
+    const day4 = parseInt(parts4[0], 10);
+    const month4 = parseInt(parts4[1], 10) - 1; // Subtract 1 because months are zero-based
+    const year4 = parseInt(parts4[2], 10);
+    const filterEndDate = new Date(year4, month4, day4);
+
+    return (
+        filterStartDate <= reservationEndDate && filterEndDate >= reservationStartDate ||
+        filterStartDate >= reservationStartDate && filterEndDate >= reservationEndDate ||
+        filterStartDate <= reservationStartDate && filterEndDate >= reservationEndDate ||
+        filterStartDate >= reservationStartDate && filterEndDate <= reservationEndDate
+    );
+}
+
+app.get('/filterLocations', filterLocations);
 
 // Delete location endpoint
 app.delete('/deleteLocation/:locationId', (req, res) => {

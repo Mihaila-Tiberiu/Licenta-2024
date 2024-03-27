@@ -42,15 +42,10 @@ export default function IndexPage(){
 
   const handleSearch = () => {
     // Redirect to listings page with parameters
-    navigate(`/listings?Judet=${county === '' ? null : county}`
-    +`&Capacitate=${eventType === '' ? null : eventType}`
-    +`&startDate=${startDateFormatted}`
-    +`&endDate=${endDateFormatted}`
-    +`&WordsInDescription=${null}`
-    +`&WordsInFacilities=${null}`
-    +`&Rating=${null}`
-    +`&PretPeZi=${null}`
-    +`&Oras=${null}`);
+    navigate(`/listings?Judet=${county}`
+    +`&Capacitate=${eventType}`
+    +`&startDate=${(startDateFormatted) ? startDateFormatted : ''}`
+    +`&endDate=${(endDateFormatted) ? endDateFormatted : ''}`);
   };
 
 

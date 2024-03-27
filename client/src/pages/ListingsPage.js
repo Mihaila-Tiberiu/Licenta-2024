@@ -5,426 +5,86 @@ import 'react-datepicker/dist/react-datepicker.css';
 import {format, isValid} from 'date-fns'
 import { CitySelect, StateSelect } from "react-country-state-city/dist/cjs";
 import { Link } from "react-router-dom";
+import axios from 'axios';
 
 const ListingsPage = () => {
 
-    let locations = [
-        {
-          "IdLocatie": 10,
-          "UtilizatorIdUtilizator": 2,
-          "Descriere": "test2",
-          "Adresa": "tes5",
-          "Nume": "test1",
-          "Oras": "Aiudul de Sus",
-          "Judet": "Alba",
-          "Rating": 1,
-          "Capacitate": 111,
-          "PretPeZi": 23,
-          "Facilitati": "Afară, Animale de companie permise",
-          "images": []
-        },
-        {
-          "IdLocatie": 11,
-          "UtilizatorIdUtilizator": 2,
-          "Descriere": "eqwewqewq",
-          "Adresa": "ewqwqeq",
-          "Nume": "yeqwygeqwewq",
-          "Oras": "eqweqw",
-          "Judet": "ewqeqweqw",
-          "Rating": 0,
-          "Capacitate": 14,
-          "PretPeZi": 15,
-          "Facilitati": "Afară, Wi-Fi, Animale de companie permise, Parcare privată",
-          "images": []
-        },
-        {
-          "IdLocatie": 12,
-          "UtilizatorIdUtilizator": 2,
-          "Descriere": "eqweqw",
-          "Adresa": "ewq",
-          "Nume": "qeqw",
-          "Oras": "weq",
-          "Judet": "ewqe",
-          "Rating": 0,
-          "Capacitate": 11,
-          "PretPeZi": 312,
-          "Facilitati": "Afară, Wi-Fi",
-          "images": []
-        },
-        {
-          "IdLocatie": 36,
-          "UtilizatorIdUtilizator": 2,
-          "Descriere": "noe2",
-          "Adresa": "noe6",
-          "Nume": "noe1",
-          "Oras": "noe5",
-          "Judet": "noe4",
-          "Rating": 0,
-          "Capacitate": 31,
-          "PretPeZi": 331,
-          "Facilitati": "Wi-Fi, Animale de companie permise, Parcare privată, Afară",
-          "images": []
-        },
-        {
-          "IdLocatie": 40,
-          "UtilizatorIdUtilizator": 2,
-          "Descriere": "",
-          "Adresa": "",
-          "Nume": "",
-          "Oras": "Bucuresti",
-          "Judet": "",
-          "Rating": 0,
-          "Capacitate": "",
-          "PretPeZi": "",
-          "Facilitati": "",
-          "images": []
-        },
-        {
-          "IdLocatie": 41,
-          "UtilizatorIdUtilizator": 2,
-          "Descriere": "",
-          "Adresa": "",
-          "Nume": "",
-          "Oras": "București",
-          "Judet": "",
-          "Rating": 0,
-          "Capacitate": "",
-          "PretPeZi": "",
-          "Facilitati": "",
-          "images": []
-        },
-        {
-          "IdLocatie": 42,
-          "UtilizatorIdUtilizator": 2,
-          "Descriere": "",
-          "Adresa": "",
-          "Nume": "",
-          "Oras": "București",
-          "Judet": "",
-          "Rating": 0,
-          "Capacitate": "",
-          "PretPeZi": "",
-          "Facilitati": "",
-          "images": []
-        },
-        {
-          "IdLocatie": 43,
-          "UtilizatorIdUtilizator": 2,
-          "Descriere": "",
-          "Adresa": "",
-          "Nume": "",
-          "Oras": "București",
-          "Judet": "",
-          "Rating": 0,
-          "Capacitate": "",
-          "PretPeZi": "",
-          "Facilitati": "",
-          "images": []
-        },
-        {
-          "IdLocatie": 44,
-          "UtilizatorIdUtilizator": 2,
-          "Descriere": "",
-          "Adresa": "",
-          "Nume": "",
-          "Oras": "București",
-          "Judet": "",
-          "Rating": 0,
-          "Capacitate": "",
-          "PretPeZi": "",
-          "Facilitati": "",
-          "images": []
-        },
-        {
-          "IdLocatie": 45,
-          "UtilizatorIdUtilizator": 2,
-          "Descriere": "",
-          "Adresa": "",
-          "Nume": "",
-          "Oras": "București",
-          "Judet": "",
-          "Rating": 0,
-          "Capacitate": "",
-          "PretPeZi": "",
-          "Facilitati": "",
-          "images": []
-        },
-        {
-          "IdLocatie": 46,
-          "UtilizatorIdUtilizator": 2,
-          "Descriere": "",
-          "Adresa": "",
-          "Nume": "",
-          "Oras": "Iași",
-          "Judet": "",
-          "Rating": 0,
-          "Capacitate": "",
-          "PretPeZi": "",
-          "Facilitati": "",
-          "images": []
-        },
-        {
-          "IdLocatie": 47,
-          "UtilizatorIdUtilizator": 2,
-          "Descriere": "",
-          "Adresa": "",
-          "Nume": "",
-          "Oras": "Iași",
-          "Judet": "",
-          "Rating": 0,
-          "Capacitate": "",
-          "PretPeZi": "",
-          "Facilitati": "",
-          "images": []
-        },
-        {
-          "IdLocatie": 48,
-          "UtilizatorIdUtilizator": 2,
-          "Descriere": "",
-          "Adresa": "",
-          "Nume": "",
-          "Oras": "Iași",
-          "Judet": "",
-          "Rating": 0,
-          "Capacitate": "",
-          "PretPeZi": "",
-          "Facilitati": "",
-          "images": []
-        },
-        {
-          "IdLocatie": 49,
-          "UtilizatorIdUtilizator": 2,
-          "Descriere": "",
-          "Adresa": "",
-          "Nume": "",
-          "Oras": "Iași",
-          "Judet": "",
-          "Rating": 0,
-          "Capacitate": "",
-          "PretPeZi": "",
-          "Facilitati": "",
-          "images": []
-        },
-        {
-          "IdLocatie": 50,
-          "UtilizatorIdUtilizator": 2,
-          "Descriere": "",
-          "Adresa": "",
-          "Nume": "",
-          "Oras": "Constanța",
-          "Judet": "",
-          "Rating": 0,
-          "Capacitate": "",
-          "PretPeZi": "",
-          "Facilitati": "",
-          "images": []
-        },
-        {
-          "IdLocatie": 51,
-          "UtilizatorIdUtilizator": 2,
-          "Descriere": "",
-          "Adresa": "",
-          "Nume": "",
-          "Oras": "Constanța",
-          "Judet": "",
-          "Rating": 0,
-          "Capacitate": "",
-          "PretPeZi": "",
-          "Facilitati": "",
-          "images": []
-        },
-        {
-          "IdLocatie": 52,
-          "UtilizatorIdUtilizator": 2,
-          "Descriere": "",
-          "Adresa": "",
-          "Nume": "",
-          "Oras": "Cluj-Napoca",
-          "Judet": "",
-          "Rating": 0,
-          "Capacitate": "",
-          "PretPeZi": "",
-          "Facilitati": "",
-          "images": []
-        },
-        {
-          "IdLocatie": 53,
-          "UtilizatorIdUtilizator": 2,
-          "Descriere": "",
-          "Adresa": "",
-          "Nume": "",
-          "Oras": "Cluj-Napoca",
-          "Judet": "",
-          "Rating": 0,
-          "Capacitate": "",
-          "PretPeZi": "",
-          "Facilitati": "",
-          "images": []
-        },
-        {
-          "IdLocatie": 54,
-          "UtilizatorIdUtilizator": 2,
-          "Descriere": "",
-          "Adresa": "",
-          "Nume": "",
-          "Oras": "Timișoara",
-          "Judet": "",
-          "Rating": 0,
-          "Capacitate": "",
-          "PretPeZi": "",
-          "Facilitati": "",
-          "images": []
-        },
-        {
-          "IdLocatie": 55,
-          "UtilizatorIdUtilizator": 2,
-          "Descriere": "",
-          "Adresa": "",
-          "Nume": "",
-          "Oras": "Timișoara",
-          "Judet": "",
-          "Rating": 0,
-          "Capacitate": "",
-          "PretPeZi": "",
-          "Facilitati": "",
-          "images": []
-        },
-        {
-          "IdLocatie": 56,
-          "UtilizatorIdUtilizator": 2,
-          "Descriere": "",
-          "Adresa": "",
-          "Nume": "",
-          "Oras": "",
-          "Judet": "",
-          "Rating": 0,
-          "Capacitate": "",
-          "PretPeZi": "",
-          "Facilitati": "",
-          "images": []
-        },
-        {
-          "IdLocatie": 57,
-          "UtilizatorIdUtilizator": 2,
-          "Descriere": "",
-          "Adresa": "",
-          "Nume": "bacau test - barlanesti",
-          "Oras": "Bârsăneşti",
-          "Judet": "Bacău County",
-          "Rating": 0,
-          "Capacitate": "",
-          "PretPeZi": "",
-          "Facilitati": "",
-          "images": []
-        },
-        {
-          "IdLocatie": 58,
-          "UtilizatorIdUtilizator": 2,
-          "Descriere": "",
-          "Adresa": "",
-          "Nume": "",
-          "Oras": "",
-          "Judet": "Bihor County",
-          "Rating": 0,
-          "Capacitate": "",
-          "PretPeZi": "",
-          "Facilitati": "",
-          "images": []
-        },
-        {
-          "IdLocatie": 59,
-          "UtilizatorIdUtilizator": 2,
-          "Descriere": "",
-          "Adresa": "",
-          "Nume": "",
-          "Oras": "",
-          "Judet": "Bihor County",
-          "Rating": 0,
-          "Capacitate": "",
-          "PretPeZi": "",
-          "Facilitati": "",
-          "images": []
-        },
-        {
-          "IdLocatie": 60,
-          "UtilizatorIdUtilizator": 2,
-          "Descriere": "",
-          "Adresa": "",
-          "Nume": "",
-          "Oras": "",
-          "Judet": "Alba",
-          "Rating": 0,
-          "Capacitate": "",
-          "PretPeZi": "",
-          "Facilitati": "",
-          "images": []
-        },
-        {
-          "IdLocatie": 61,
-          "UtilizatorIdUtilizator": 2,
-          "Descriere": "a",
-          "Adresa": "a",
-          "Nume": "a",
-          "Oras": "Aiud",
-          "Judet": "Alba",
-          "Rating": 0,
-          "Capacitate": 110,
-          "PretPeZi": 111,
-          "Facilitati": "Wi-Fi",
-          "images": []
-        }
-      ]
-
-      
-
     const navigate = useNavigate();
     const [minRating, setMinRating] = useState(0);
-    const [searchTerm, setSearchTerm] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
     const [facilitati, setFacilitati] = useState([]);
-    const [capacity, setCapacity] = useState(null);
-    const [pricePerDay, setPricePerDay] = useState(null);
+    const [capacity, setCapacity] = useState('');
+    const [pricePerDay, setPricePerDay] = useState('');
     const [showFilters, setShowFilters] = useState(false);
 
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
-    const [startDateFormatted, setStartDateFormatted] = useState(null);
-    const [endDateFormatted, setEndDateFormatted] = useState(null);
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+    const [startDateFormatted, setStartDateFormatted] = useState('');
+    const [endDateFormatted, setEndDateFormatted] = useState('');
 
-    const [judet, setJudet] = useState(null);
-    const [oras, setOras] = useState(null);
+    const [judet, setJudet] = useState('');
+    const [oras, setOras] = useState('');
     const countryid = 181;
-    const [stateId, setStateId] = useState(null);
+    const [stateId, setStateId] = useState('');
 
-    const [filteredLocations, setFilteredLocations] = useState([]);
+    const [filteredFinalLocations, setFilteredFinalLocations] = useState([]);
 
     useEffect(() => {
-    // Extracting parameters from the URL
-    const urlParams = new URLSearchParams(window.location.search);
-    console.log(urlParams);
-
-    // Define a function to check if a parameter exists and is valid
-    const isValidParam = (paramName, locationValue) => {
-        const paramValue = urlParams.get(paramName);
-        return !paramValue || locationValue === paramValue || paramValue === "null";
-    };
-
-    const isValidCapacitate = (paramName, locationValue) => {
-        const paramValue = urlParams.get(paramName);
-        return !paramValue || parseInt(locationValue) >= parseInt(paramValue) || paramValue === "null";
-    }
-
-    // Update the state with filtered locations
-    setFilteredLocations(locations.filter(location => {
-        return isValidParam("Judet", location.Judet) &&
-            isValidCapacitate("Capacitate", location.Capacitate) &&
-            isValidParam("Oras", location.Oras);
-                // TODO: add all parameters
-        }));
+        const fetchFilteredLocations = async () => {
+            try {
+                // Extract parameters from the URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const Judet = urlParams.get('Judet');
+                const MinCapacitate = urlParams.get('MinCapacitate');
+                const startDate = urlParams.get('startDate');
+                const endDate = urlParams.get('endDate');
+                const WordsInDescription = urlParams.get('WordsInDescription');
+                const WordsInFacilities = urlParams.get('WordsInFacilities');
+                const MinRating = urlParams.get('MinRating');
+                const MaxPretPeZi = urlParams.get('MaxPretPeZi');
+                const Oras = urlParams.get('Oras');
+    
+                // Construct params object to pass to Axios GET request
+                const params = {
+                    Judet,
+                    MinCapacitate,
+                    startDate,
+                    endDate,
+                    WordsInDescription,
+                    WordsInFacilities,
+                    MinRating,
+                    MaxPretPeZi,
+                    Oras
+                };
+                console.log(params);
+    
+                const response = await axios.get('/filterLocations', { params });
+                if (!response.data || !Array.isArray(response.data)) {
+                    throw new Error('Invalid data format for locations');
+                }
+                
+                const locationsWithImages = await Promise.all(response.data.map(async location => {
+                    const imageResponse = await axios.get(`/getImageUrls/${location.IdLocatie}`);
+                    if (imageResponse.data && Array.isArray(imageResponse.data)) {
+                        location.images = imageResponse.data.map(url => ({ URLimagine: url }));
+                    } else {
+                        location.images = [];
+                    }
+                    return location;
+                }));
+    
+                setFilteredFinalLocations(locationsWithImages);
+            } catch (error) {
+                console.error('Error fetching filtered locations:', error.message);
+            }
+        };
+    
+        fetchFilteredLocations();
     }, []);
+    
 
-    const handleSearch = (event) => {
+    const handleSearchTerm = (event) => {
         setSearchTerm(event.target.value);
-        // You can implement search functionality here
     };
 
     function handleCbClick(ev) {
@@ -441,13 +101,13 @@ const ListingsPage = () => {
 
     const handleSubmit = (event) => {
         navigate(`/listings?Judet=${judet}`
-        +`&Capacitate=${capacity}`
+        +`&MinCapacitate=${capacity}`
         +`&startDate=${startDateFormatted}`
         +`&endDate=${endDateFormatted}`
         +`&WordsInDescription=${searchTerm}`
-        +`&WordsInFacilities=${facilitati.length ===  0 ? null : facilitati.join(", ")}`
-        +`&Rating=${minRating}`
-        +`&PretPeZi=${pricePerDay}`
+        +`&WordsInFacilities=${facilitati.length ===  0 ? '' : facilitati.join(", ")}`
+        +`&MinRating=${minRating}`
+        +`&MaxPretPeZi=${pricePerDay}`
         +`&Oras=${oras}`);
         window.location.reload();
     };
@@ -501,7 +161,7 @@ const ListingsPage = () => {
                 <input
                     type="text"
                     value={searchTerm}
-                    onChange={handleSearch}
+                    onChange={handleSearchTerm}
                     placeholder='Separă cuvintele cheie prin virgulă (ex: însorit, minunat)'
                     className="input-box"
                 />
@@ -531,13 +191,14 @@ const ListingsPage = () => {
                 </div>
                 <div className="mb-4">
                 <label className="block  text-sm font-bold mb-2">
-                    Capacitate:
+                    Capacitate minimă:
                 </label>
                 <input
                     type="number"
                     value={capacity}
                     onChange={(e) => setCapacity(e.target.value)}
                     className="input-box"
+                    placeholder='Numarul maxim de persoane'
                 />
                 </div>
                 <div className="mb-4">
@@ -549,6 +210,7 @@ const ListingsPage = () => {
                     value={pricePerDay}
                     onChange={(e) => setPricePerDay(e.target.value)}
                     className="input-box"
+                    placeholder='Pretul maxim pe zi exprimat in RON'
                 />
                 </div>
                 <div>
@@ -593,7 +255,7 @@ const ListingsPage = () => {
         </div>
         )}
         <div className="w-2/4 mx-auto">
-        {filteredLocations.length > 0 && filteredLocations.map(location => (
+        {filteredFinalLocations.length > 0 && filteredFinalLocations.map(location => (
             <Link to={'/listings/'+location.IdLocatie} key={location.IdLocatie} className="bg-gray-200 p-4 rounded-2xl flex gap-4 mt-4 cursor-pointer border-2 border-gray-300 shadow-lg relative">
                 <div className="bg-gray-300 w-48 h-48 rounded-2xl border overflow-hidden relative">
                     {location.images.length > 0 && (
