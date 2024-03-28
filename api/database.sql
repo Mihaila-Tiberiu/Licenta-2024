@@ -40,8 +40,6 @@ CREATE TABLE Recenzii (
     IdRecenzie INTEGER PRIMARY KEY AUTOINCREMENT,
     UtilizatorIdUtilizator INTEGER NOT NULL,
     LocatieIdLocatie INTEGER NOT NULL,
-    IdUtilizator INTEGER NOT NULL,
-    IdLocatie INTEGER NOT NULL,
     Rating REAL NOT NULL,
     Comentariu TEXT,
     FOREIGN KEY(UtilizatorIdUtilizator) REFERENCES Utilizator(IdUtilizator),

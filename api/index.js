@@ -456,3 +456,23 @@ app.delete('/deleteLocation/:locationId', (req, res) => {
         res.sendStatus(200);
     });
 });
+
+// Get all the reviews of a location
+app.get('/getLocationReviews/:placeId', (req, res) => {
+    const placeId = req.params.placeId;
+
+    db.all('SELECT * FROM Recenzii WHERE LocatieIdLocatie = ?', [placeId], (err, rows) => {
+        if (err) {
+            console.error(err.message);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            res.json(rows);
+        }
+    });
+});
+
+// Get the info about a location
+// app.get('/places/:placeId')
+
+// Get all the images for a location
+// app.get('/getImageUrls/:placeId')
