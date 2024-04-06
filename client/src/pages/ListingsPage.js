@@ -29,6 +29,43 @@ const ListingsPage = () => {
 
     const [filteredFinalLocations, setFilteredFinalLocations] = useState([]);
 
+    const [orderBy, setOrderBy] = useState('');
+    const handleOrderChange = (event) => {
+        setOrderBy(event.target.value);
+    };
+
+    const sortLocations = () => {
+        let sortedLocations = [...filteredFinalLocations];
+    
+        switch (orderBy) {
+            case 'ratingDesc':
+                sortedLocations.sort((a, b) => b.Rating - a.Rating);
+                break;
+            case 'capacityDesc':
+                sortedLocations.sort((a, b) => b.Capacitate - a.Capacitate);
+                break;
+            case 'capacityAsc':
+                sortedLocations.sort((a, b) => a.Capacitate - b.Capacitate);
+                break;
+            case 'priceDesc':
+                sortedLocations.sort((a, b) => b.PretPeZi - a.PretPeZi);
+                break;
+            case 'priceAsc':
+                sortedLocations.sort((a, b) => a.PretPeZi - b.PretPeZi);
+                break;
+            default:
+                break;
+        }
+    
+        setFilteredFinalLocations(sortedLocations);
+    };
+
+    useEffect(() => {
+        if (filteredFinalLocations.length > 0) {
+            sortLocations();
+        }
+    }, [filteredFinalLocations, orderBy]);
+
     useEffect(() => {
         const fetchFilteredLocations = async () => {
             try {
@@ -129,12 +166,26 @@ const ListingsPage = () => {
   return (
     <div className='min-h-screen'>
 
-        <button 
-            className={`font-bold py-2 px-4 rounded mt-5 mb-5 m-auto w-max flex border-2 border-gray-300 hover:bg-gray-300 ${showFilters ? 'bg-gray-400 border-transparent border-2' : 'bg-gray-200'}`} 
-            onClick={() => setShowFilters(!showFilters)}
-        >
-            {showFilters ? "Ascunde Filtre" : "Afișează Filtre"}
-        </button>
+        <div className="flex justify-center items-center mt-5 mb-5 m-auto">
+            <button 
+                className={`font-bold py-2 px-4 rounded border-2 border-gray-300 hover:bg-gray-300 ${showFilters ? 'bg-gray-400 border-transparent border-2' : 'bg-gray-200'}`} 
+                onClick={() => setShowFilters(!showFilters)}
+            >
+                {showFilters ? "Ascunde Filtre" : "Afișează Filtre"}
+            </button>
+            <select
+                className="cursor-pointer py-2 px-4 font-bold rounded border-2 ml-2 border-gray-300 hover:bg-gray-300"
+                value={orderBy}
+                onChange={handleOrderChange}
+            >
+                <option value="">Nu sorta</option>
+                <option value="ratingDesc">Cel mai bun rating</option>
+                <option value="capacityDesc">Cea mai mare capacitate</option>
+                <option value="capacityAsc">Cea mai mică capacitate</option>
+                <option value="priceDesc">Cel mai mare preț</option>
+                <option value="priceAsc">Cel mai mic preț</option>
+            </select>
+        </div>
 
         {showFilters && (
         <div className="w-3/4 flex m-auto">
