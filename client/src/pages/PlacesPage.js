@@ -217,7 +217,7 @@ export default function PlacesPage(){
     };
 
     return (
-        <div>
+        <div className="min-h-screen">
             {(action !== 'new' && isNaN(parseInt(action)) ) && (
                 <div>
 

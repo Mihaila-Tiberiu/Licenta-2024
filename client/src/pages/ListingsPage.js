@@ -165,7 +165,14 @@ const ListingsPage = () => {
 
   return (
     <div className='min-h-screen'>
-
+        <header className="bg-primary text-white text-center pt-5 pb-10">
+            <div className="container mx-auto">
+            
+                <h2 className="text-4xl font-bold mb-4"> 
+                    Locații disponibile
+                </h2>
+            </div>
+        </header>
         <div className="flex justify-center items-center mt-5 mb-5 m-auto">
             <button 
                 className={`font-bold py-2 px-4 rounded border-2 border-gray-300 hover:bg-gray-300 ${showFilters ? 'bg-gray-400 border-transparent border-2' : 'bg-gray-200'}`} 
