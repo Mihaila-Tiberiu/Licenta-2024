@@ -14,9 +14,9 @@ export default function ContactUsPage() {
                         Date de contact
                     </h2>
                     <div className="w-1/3 text-lg mt-10 text-left mx-auto">
-                        Email: mihailatiberiu20@stud.ase.ro
+                        Email: <a href="mailto:mihailatiberiu20@stud.ase.ro">mihailatiberiu20@stud.ase.ro</a>
                         <br />
-                        Telefon: 07XXXXXXXX
+                        Telefon: <a href="tel:07XXXXXXXX">07XXXXXXXX</a>
                         <br />
                         <br />
                         {/* Google Maps Location */}
