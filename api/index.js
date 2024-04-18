@@ -471,8 +471,16 @@ app.get('/getLocationReviews/:placeId', (req, res) => {
     });
 });
 
-// Get the info about a location
-// app.get('/places/:placeId')
+// Get all the bookings of a location
+app.get('/getLocationBookings/:placeId', (req, res) => {
+    const placeId = req.params.placeId;
 
-// Get all the images for a location
-// app.get('/getImageUrls/:placeId')
+    db.all('SELECT * FROM Rezervari WHERE LocatiiIdLocatie2 = ?', [placeId], (err, rows) => {
+        if (err) {
+            console.error(err.message);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            res.json(rows);
+        }
+    });
+});

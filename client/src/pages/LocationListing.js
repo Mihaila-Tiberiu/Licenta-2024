@@ -5,6 +5,8 @@ import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import ImageCarousel from '../ImageCarousel';
 import React from "react";
+import LocationCalendar from '../LocationCalendar';
+
 
 export default function LocationListing() {
     const { user } = useContext(UserContext);
@@ -65,7 +67,7 @@ export default function LocationListing() {
                     </a>
                 </div>
             </header>
-            <div className="bg-gray-100 px-8 py-8">
+            <div className="bg-gray-100 px-8 pt-8">
                 <div className="container mx-auto flex flex-col md:flex-row">
                     <div className="md:w-1/2 pr-8">
                         {/* Info content goes here */}
@@ -79,6 +81,7 @@ export default function LocationListing() {
                         <h3 className="text-l font-bold mb-1">Oră check-in: {locationInfo.CheckIn}</h3>
                         <h3 className="text-l font-bold mb-1">Oră check-out: {locationInfo.CheckOut}</h3>
                     </div>
+                    
                     <div className="md:w-1/2">
                         {/* Image carousel component */}
                         <ImageCarousel locationImagesArray={locationImagesArray} />
@@ -86,9 +89,14 @@ export default function LocationListing() {
                     
                 </div>
             </div>
-            <button onClick={handleOnClick}>
-                consola
-            </button>
+            <div className="bg-gray-100 pl-48 pb-8">
+                <LocationCalendar locationId={locationId} />
+                
+                <button onClick={handleOnClick} className="mt-2 bg-primary hover:bg-green-900 text-white font-bold py-2 px-4 rounded">
+                    Fă o rezervare!
+                </button>
+            </div>
+            
         </div>
     )
 }
