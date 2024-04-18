@@ -64,7 +64,7 @@ export default function LocationCalendar({ locationId }) {
 
     return (
         <div className="calendar-container">
-            <h2 className='font-bold pb-1'>Date valabile</h2>
+            <h2 className='font-bold pb-1'>Date valabile:</h2>
             <Calendar
                 tileDisabled={tileDisabled}
             />

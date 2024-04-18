@@ -18,8 +18,16 @@ export default function LocationListing() {
     const {locationId} = useParams();
 
     const [locationInfo, setLocationInfo] = useState('');
-    const [locationImagesArray, setLocationImagesArray] = useState('');
-    const [locationReviewsArray, setLocationReviewsArray] = useState('');
+    const [locationImagesArray, setLocationImagesArray] = useState([]);
+    const [locationReviewsArray, setLocationReviewsArray] = useState([]);
+
+    const [bookingCount, setBookingCount] = useState(0);
+    const [reviewCount, setReviewCount] = useState(0);
+    const [displayReviewForm, setDisplayReviewForm] = useState(false);
+
+    const [rating, setRating] = useState(1);
+    const [comment, setComment] = useState('');
+
 
     const navigate = useNavigate();
 
@@ -35,6 +43,19 @@ export default function LocationListing() {
                 const response3 = await axios.get(`/getLocationReviews/${locationId}`);
                 setLocationReviewsArray(response3.data);
 
+                if (userId) {
+                    try {
+                        const response4 = await axios.get(`/userBookingReviewCount/${userId}/${locationId}`);
+                        const { bookingCount, reviewCount } = response4.data;
+                        setBookingCount(bookingCount);
+                        setReviewCount(reviewCount);
+                        setDisplayReviewForm(bookingCount > reviewCount);
+                    } catch (error) {
+                        console.error('Error fetching booking and review counts:', error);
+                    }
+                }
+                
+
             } catch (error) {
                 navigate('/listings');
                 console.error('Error fetching data:', error);
@@ -42,13 +63,31 @@ export default function LocationListing() {
         };
 
         fetchData();
-    }, []);
+    }, [locationId, userId]);
 
     const handleOnClick = () => {
         console.log('Location Info:', locationInfo);
         console.log('Location Images Array:', locationImagesArray);
         console.log('Location Reviews Array:', locationReviewsArray);
-      };
+        console.log('UserId:', userId);
+        console.log(bookingCount, reviewCount, comment, rating);
+    };
+
+    const handleSubmitReview = async (e, rating, comment) => {
+        try {
+            e.preventDefault();
+            console.log("test")
+            // const response = await axios.post('/submitReview', {
+            //     UtilizatorIdUtilizator: userId,
+            //     LocatieIdLocatie: locationId,
+            //     Rating: rating,
+            //     Comentariu: comment
+            // });
+            // Handle success or update state accordingly
+        } catch (error) {
+            console.error('Error submitting review:', error);
+        }
+    };
 
     return (
         <div className="min-h-screen">
@@ -79,22 +118,75 @@ export default function LocationListing() {
                         <p className="text-gray-700 mb-8">{locationInfo.Facilitati}</p>
                         <h3 className="text-l font-bold mb-4">Capacitate: {locationInfo.Capacitate} persoane</h3>
                         <h3 className="text-l font-bold mb-1">Oră check-in: {locationInfo.CheckIn}</h3>
-                        <h3 className="text-l font-bold mb-1">Oră check-out: {locationInfo.CheckOut}</h3>
+                        <h3 className="text-l font-bold mb-8">Oră check-out: {locationInfo.CheckOut}</h3>
+                        <div>
+                            <LocationCalendar locationId={locationId} />
+                            
+                            <button onClick={handleOnClick} className="mt-2 w-1/2 bg-primary hover:bg-green-900 text-white font-bold py-2 px-4 rounded">
+                                Fă o rezervare!
+                            </button>
+                        </div>
                     </div>
                     
-                    <div className="md:w-1/2">
-                        {/* Image carousel component */}
-                        <ImageCarousel locationImagesArray={locationImagesArray} />
+                    <div className="md:w-1/2 ">
+                        <div className="flex flex-col justify-center items-center h-full">
+                            {/* Image carousel component */}
+                            <ImageCarousel locationImagesArray={locationImagesArray} />
+                        </div>
                     </div>
                     
                 </div>
             </div>
-            <div className="bg-gray-100 pl-48 pb-8">
-                <LocationCalendar locationId={locationId} />
-                
-                <button onClick={handleOnClick} className="mt-2 bg-primary hover:bg-green-900 text-white font-bold py-2 px-4 rounded">
-                    Fă o rezervare!
-                </button>
+            <div className="mt-8 w-1/2 mx-auto bg-white rounded-lg shadow-xl p-6 mb-6 border-gray-300 border-2">
+                {displayReviewForm && (
+                    <form onSubmit={handleSubmitReview} className="mb-8 bg-white rounded-lg shadow-xl p-6 border-gray-300 border-2">
+                        <label className="block  text-sm font-bold mb-2">
+                            Rating:
+                        </label>
+                        <input
+                            required
+                            type="range"
+                            min={1}
+                            max={5}
+                            step={0.5}
+                            value={rating}
+                            onChange={(e) => setRating(parseFloat(e.target.value))}
+                            className="slider appearance-none w-full h-3 bg-gray-200 rounded-full outline-none mb-4"
+                        />
+                        <span>{rating} ⭐</span>
+                        <div className="mb-4 mt-8 ">
+                            <label className="block text-sm font-bold mb-2" htmlFor="comment">
+                                Comentariu:
+                            </label>
+                            <textarea
+                                className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                id="comment"
+                                name="comment"
+                                rows="4"
+                                required
+                                onChange={(e) => setComment(e.target.value)}
+                            ></textarea>
+                        </div>
+                        <button
+                            type="submit"
+                            className="w-full bg-primary hover:bg-green-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                        >
+                            Trimite recenzia
+                        </button>
+                    </form>
+                )}
+                {locationReviewsArray.length > 0 ? (
+                    locationReviewsArray.map((review) => (
+                        <div key={review.IdRecenzie} className="bg-white rounded-lg shadow-xl p-6 mb-6 border-gray-300 border-2">
+                            <div className="flex items-center mb-3">
+                                <h2 className="text-xl font-bold">{review.Rating} ⭐</h2>
+                            </div>
+                            <p className="text-gray-700">{review.Comentariu}</p>
+                        </div>
+                    ))
+                ) : (
+                    <p className="text-center">Nu există încă recenzii pentru această locație!</p>
+                )}
             </div>
             
         </div>

@@ -484,3 +484,36 @@ app.get('/getLocationBookings/:placeId', (req, res) => {
         }
     });
 });
+
+// Endpoint to get counts of user bookings and reviews for a location
+app.get('/userBookingReviewCount/:userId/:locationId', (req, res) => {
+    const { userId, locationId } = req.params;
+
+    // Count bookings
+    db.get(
+        `SELECT COUNT(*) AS bookingCount FROM Rezervari WHERE UtilizatorIdUtilizator2 = ? AND LocatiiIdLocatie2 = ? AND Status = 'DONE' AND CheckOutDate < date('now')`,
+        [userId, locationId],
+        (err, bookingRow) => {
+            if (err) {
+                return res.status(500).json({ error: 'Internal Server Error' });
+            }
+
+            const bookingCount = bookingRow ? bookingRow.bookingCount : 0;
+
+            // Count reviews
+            db.get(
+                `SELECT COUNT(*) AS reviewCount FROM Recenzii WHERE UtilizatorIdUtilizator = ? AND LocatieIdLocatie = ?`,
+                [userId, locationId],
+                (err, reviewRow) => {
+                    if (err) {
+                        return res.status(500).json({ error: 'Internal Server Error' });
+                    }
+
+                    const reviewCount = reviewRow ? reviewRow.reviewCount : 0;
+
+                    res.json({ bookingCount, reviewCount });
+                }
+            );
+        }
+    );
+});

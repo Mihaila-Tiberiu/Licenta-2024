@@ -10,7 +10,7 @@ import axios from 'axios';
 const ListingsPage = () => {
 
     const navigate = useNavigate();
-    const [minRating, setMinRating] = useState(0);
+    const [minRating, setMinRating] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
     const [facilitati, setFacilitati] = useState([]);
     const [capacity, setCapacity] = useState('');
@@ -203,9 +203,9 @@ const ListingsPage = () => {
                 </label>
                 <input
                     type="range"
-                    min={0}
+                    min={1}
                     max={5}
-                    step={0.1}
+                    step={0.5}
                     value={minRating}
                     onChange={(e) => setMinRating(parseFloat(e.target.value))}
                     className="slider appearance-none w-full h-3 bg-gray-200 rounded-full outline-none mb-4"
