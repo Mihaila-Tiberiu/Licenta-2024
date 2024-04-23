@@ -10,10 +10,7 @@ import LocationCalendar from '../LocationCalendar';
 
 export default function LocationListing() {
     const { user } = useContext(UserContext);
-    const userId = user ? user.IdUtilizator : null; // TODO: va fi folosit pentru 2 lucruri:
-    // daca locatia e a utilizatorului, va exista un buton care sa il duca la pagina de editare a locatiei
-    // daca are o rezervare facuta in viitor, sa o poata edita
-    // daca are o rezervare facuta in trecut, sa poata lasa recenzii 
+    const userId = user ? user.IdUtilizator : null;
 
     const {locationId} = useParams();
 
@@ -76,16 +73,22 @@ export default function LocationListing() {
     const handleSubmitReview = async (e, rating, comment) => {
         try {
             e.preventDefault();
-            console.log("test")
-            // const response = await axios.post('/submitReview', {
-            //     UtilizatorIdUtilizator: userId,
-            //     LocatieIdLocatie: locationId,
-            //     Rating: rating,
-            //     Comentariu: comment
-            // });
+            const response = await axios.post('/submitReview', {
+                userId,
+                locationId,
+                rating,
+                comment
+            });
             // Handle success or update state accordingly
+            window.location.reload();
         } catch (error) {
             console.error('Error submitting review:', error);
+            console.log({
+                userId,
+                locationId,
+                rating,
+                comment
+            });
         }
     };
 
@@ -139,7 +142,7 @@ export default function LocationListing() {
             </div>
             <div className="mt-8 w-1/2 mx-auto bg-white rounded-lg shadow-xl p-6 mb-6 border-gray-300 border-2">
                 {displayReviewForm && (
-                    <form onSubmit={handleSubmitReview} className="mb-8 bg-white rounded-lg shadow-xl p-6 border-gray-300 border-2">
+                    <form onSubmit={(e) => handleSubmitReview(e, rating, comment)} className="mb-8 bg-white rounded-lg shadow-xl p-6 border-gray-300 border-2">
                         <label className="block  text-sm font-bold mb-2">
                             Rating:
                         </label>

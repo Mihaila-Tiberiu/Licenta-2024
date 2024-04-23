@@ -475,7 +475,8 @@ app.get('/getLocationReviews/:placeId', (req, res) => {
 app.get('/getLocationBookings/:placeId', (req, res) => {
     const placeId = req.params.placeId;
 
-    db.all('SELECT * FROM Rezervari WHERE LocatiiIdLocatie2 = ?', [placeId], (err, rows) => {
+    db.all(`SELECT * FROM Rezervari WHERE LocatiiIdLocatie2 = ? AND (Status = 'DONE' OR Status = 'PENDING' OR Status = 'RESERVED')
+    `, [placeId], (err, rows) => {
         if (err) {
             console.error(err.message);
             res.status(500).json({ error: 'Internal Server Error' });
@@ -517,3 +518,67 @@ app.get('/userBookingReviewCount/:userId/:locationId', (req, res) => {
         }
     );
 });
+
+// Define route for submitting a review
+app.post('/submitReview', async (req, res) => {
+    const { userId, locationId, rating, comment } = req.body;
+
+    try {
+        // Insert review into the Recenzii table
+        const insertQuery = `
+            INSERT INTO Recenzii (UtilizatorIdUtilizator, LocatieIdLocatie, Rating, Comentariu)
+            VALUES (?, ?, ?, ?)
+        `;
+        await runQuery(insertQuery, [userId, locationId, rating, comment]);
+
+        // Calculate new location rating
+        const calculateRatingQuery = `
+            SELECT AVG(Rating) AS AvgRating
+            FROM Recenzii
+            WHERE LocatieIdLocatie = ?
+        `;
+        const result = await getSingleResult(calculateRatingQuery, [locationId]);
+        const newRating = result.AvgRating || 0;
+        const roundedRating = parseFloat(newRating.toFixed(2));
+
+        // Update location rating
+        const updateQuery = `
+            UPDATE Locatii
+            SET Rating = ?
+            WHERE IdLocatie = ?
+        `;
+        await runQuery(updateQuery, [roundedRating, locationId]);
+
+        res.status(200).json({ message: 'Review submitted successfully.' });
+    } catch (error) {
+        console.error('Error submitting review:', error);
+        res.status(500).json({ error: 'Failed to submit review.' });
+    }
+});
+
+// Helper function to run a SQL query and return a promise
+function runQuery(query, params) {
+    return new Promise((resolve, reject) => {
+        db.run(query, params, function (err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(this);
+            }
+        });
+    });
+}
+
+// Helper function to execute a query that returns a single result
+function getSingleResult(query, params) {
+    return new Promise((resolve, reject) => {
+        db.get(query, params, (err, row) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(row);
+            }
+        });
+    });
+}
+
