@@ -1,10 +1,32 @@
 import { Link, Navigate } from 'react-router-dom';
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef} from "react";
 import axios from 'axios';
 import { UserContext } from '../UserContext';
+import emailjs from '@emailjs/browser';
+import {SERVICE_ID_EMAILJS, TEMPLATE_ID_EMAILJS, PUBLIC_KEY_EMAILJS} from '../config.js';
 
 
 export default function ContactUsPage() {
+    const form = useRef();
+
+    const sendEmail = (e) => {
+        e.preventDefault();
+
+        emailjs
+        .sendForm(SERVICE_ID_EMAILJS, TEMPLATE_ID_EMAILJS, form.current, {
+            publicKey: PUBLIC_KEY_EMAILJS,
+        })
+        .then(
+            () => {
+            console.log('SUCCESS!');
+            alert('Mesaj transmis cu succes!');
+            },
+            (error) => {
+            console.log('FAILED...', error.text);
+            },
+        );
+    };
+    
     return (
         <div className='min-h-screen'>
             <header className="bg-primary text-white text-center pt-5 pb-10">
@@ -14,7 +36,7 @@ export default function ContactUsPage() {
                         Date de contact
                     </h2>
                     <div className="w-1/3 text-lg mt-10 text-left mx-auto">
-                        Email: <a href="mailto:mihailatiberiu20@stud.ase.ro">mihailatiberiu20@stud.ase.ro</a>
+                        Email: <a href="mailto:occasionest@dummy.com">occasionest@dummy.com</a>
                         <br />
                         Telefon: <a href="tel:07XXXXXXXX">07XXXXXXXX</a>
                         <br />
@@ -41,7 +63,7 @@ export default function ContactUsPage() {
                         Trimite-ne un mesaj!
                     </h2>
                     {/* Contact Form */}
-                    <form className="">
+                    <form className="" ref={form} onSubmit={sendEmail}>
                         <div className="mb-4">
                             <label htmlFor="name" className="block text-sm font-medium">
                                 Numele dvs.
