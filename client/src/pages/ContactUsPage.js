@@ -1,13 +1,11 @@
-import { Link, Navigate } from 'react-router-dom';
-import React, { useContext, useEffect, useState, useRef} from "react";
-import axios from 'axios';
-import { UserContext } from '../UserContext';
+import React, { useState, useRef} from "react";
 import emailjs from '@emailjs/browser';
 import {SERVICE_ID_EMAILJS, TEMPLATE_ID_EMAILJS, PUBLIC_KEY_EMAILJS} from '../config.js';
 
 
 export default function ContactUsPage() {
     const form = useRef();
+    const [redirect, setRedirect] = useState(false);
 
     const sendEmail = (e) => {
         e.preventDefault();
@@ -20,12 +18,17 @@ export default function ContactUsPage() {
             () => {
             console.log('SUCCESS!');
             alert('Mesaj transmis cu succes!');
+            setRedirect(true);
             },
             (error) => {
             console.log('FAILED...', error.text);
             },
         );
     };
+
+    if (redirect) {
+        window.location.reload();
+    }
     
     return (
         <div className='min-h-screen'>

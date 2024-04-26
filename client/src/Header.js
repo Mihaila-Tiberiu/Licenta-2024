@@ -13,7 +13,7 @@ export default function Header(){
             <div className="flex rounded items-center text-lg">
                 <li><a href="/" className="hover:text-gray-300 border-r-2 pr-2">Acasă</a></li>
                 <li><a href="/listings" className="hover:text-gray-300 border-r-2 ml-2 pr-2">Caută locații</a></li>
-                <li><a href="#" className="hover:text-gray-300 border-r-2 ml-2 pr-2">Despre noi</a></li>
+                <li><a href="/about" className="hover:text-gray-300 border-r-2 ml-2 pr-2">Despre noi</a></li>
                 <li><a href="/contact" className="hover:text-gray-300 ml-2">Contact</a></li>
             </div>
             </ul>
