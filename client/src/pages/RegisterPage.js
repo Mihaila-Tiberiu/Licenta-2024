@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
+import Alert from '../Alert';
 
 export default function RegisterPage(){
 
@@ -16,16 +17,16 @@ export default function RegisterPage(){
             password,
         })
         .then(res => {
-            alert(res.data.message);
+            Alert.showAlert(res.data.message);
         })
         .catch(error => {
             // Utilizator deja existent
             if (error.response.status === 422) {
-                alert(error.response.data.error); // Afisare mesaj de eroare de la server
+                Alert.showAlert(error.response.data.error); // Afisare mesaj de eroare de la server
             // Erori generice
             } else {
                 console.error('Error:', error.message);
-                alert('Eroare de server');
+                Alert.showAlert('Eroare de server');
             }
         });
     }

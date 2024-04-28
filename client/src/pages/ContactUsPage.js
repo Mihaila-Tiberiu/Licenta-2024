@@ -1,7 +1,7 @@
 import React, { useState, useRef} from "react";
 import emailjs from '@emailjs/browser';
 import {SERVICE_ID_EMAILJS, TEMPLATE_ID_EMAILJS, PUBLIC_KEY_EMAILJS} from '../config.js';
-
+import Alert from '../Alert';
 
 export default function ContactUsPage() {
     const form = useRef();
@@ -17,8 +17,10 @@ export default function ContactUsPage() {
         .then(
             () => {
             console.log('SUCCESS!');
-            alert('Mesaj transmis cu succes!');
-            setRedirect(true);
+            Alert.showAlert('Mesaj transmis cu succes!');
+            setTimeout(function() {
+                setRedirect(true);
+            }, 2000); 
             },
             (error) => {
             console.log('FAILED...', error.text);

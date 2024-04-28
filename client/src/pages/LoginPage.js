@@ -2,6 +2,7 @@ import { Link, Navigate } from 'react-router-dom';
 import React, { useContext, useEffect, useState } from "react";
 import axios from 'axios';
 import { UserContext } from '../UserContext';
+import Alert from '../Alert';
 
 export default function LoginPage(){
 
@@ -16,11 +17,11 @@ export default function LoginPage(){
       try{
          const response = await axios.post('/login', {username, password});
          setUser(response.data);
-         alert('Autentificare cu succes');
+         Alert.showAlert('Autentificare cu succes!');
          setRedirect(true);
       }
       catch (err){
-         alert('Autentificare esuata');
+         Alert.showAlert('Autentificare eșuată!');
       }
    }
 

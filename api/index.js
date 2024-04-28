@@ -58,7 +58,7 @@ app.post('/register', (req, res) => {
                     console.error(err.message);
                     return res.status(500).json({ error: 'Internal Server Error' });
                 }
-                res.status(201).json({ message: 'Utilizator creat cu succes' });
+                res.status(201).json({ message: 'Utilizator creat cu succes! Acum vă puteți autentifica' });
             });
         }
     });
@@ -492,7 +492,7 @@ app.get('/userBookingReviewCount/:userId/:locationId', (req, res) => {
 
     // Count bookings
     db.get(
-        `SELECT COUNT(*) AS bookingCount FROM Rezervari WHERE UtilizatorIdUtilizator2 = ? AND LocatiiIdLocatie2 = ? AND Status = 'DONE' AND CheckOutDate < date('now')`,
+        `SELECT COUNT(*) AS bookingCount FROM Rezervari WHERE UtilizatorIdUtilizator = ? AND LocatiiIdLocatie2 = ? AND Status = 'DONE' AND CheckOutDate < date('now')`,
         [userId, locationId],
         (err, bookingRow) => {
             if (err) {
