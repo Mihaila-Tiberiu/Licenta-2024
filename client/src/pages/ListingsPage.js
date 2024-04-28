@@ -10,7 +10,7 @@ import axios from 'axios';
 const ListingsPage = () => {
 
     const navigate = useNavigate();
-    const [minRating, setMinRating] = useState(1);
+    const [minRating, setMinRating] = useState(0);
     const [searchTerm, setSearchTerm] = useState('');
     const [facilitati, setFacilitati] = useState([]);
     const [capacity, setCapacity] = useState('');
@@ -203,7 +203,7 @@ const ListingsPage = () => {
                 </label>
                 <input
                     type="range"
-                    min={1}
+                    min={0}
                     max={5}
                     step={0.5}
                     value={minRating}

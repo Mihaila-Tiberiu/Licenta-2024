@@ -31,6 +31,7 @@ CREATE TABLE Rezervari (
     CheckOutDate TEXT,
     Pret REAL NOT NULL,
     Status TEXT,
+    BookingTimestamp TIMESTAMP,
     FOREIGN KEY(UtilizatorIdUtilizator) REFERENCES Utilizator(IdUtilizator),
     FOREIGN KEY(UtilizatorIdUtilizator2) REFERENCES Utilizator(IdUtilizator),
     FOREIGN KEY(LocatiiIdLocatie2) REFERENCES Locatii(IdLocatie)

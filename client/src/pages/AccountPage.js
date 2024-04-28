@@ -4,7 +4,7 @@ import { Navigate, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import PlacesPage from "./PlacesPage";
-import MyBookingsPage from "./MyBookingsPlace";
+import MyBookingsPage from "./MyBookingsPage";
 import MyLocationsBookingsPage from "./MyLocationsBookingsPage";
 
 export default function AccountPage() {

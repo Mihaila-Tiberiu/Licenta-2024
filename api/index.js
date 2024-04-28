@@ -501,6 +501,28 @@ app.get('/getAllUserBookings/:userId', (req, res) => {
     });
 });
 
+// Get all user bookings within the last 48 hours (AS CLIENT)
+app.get('/getAllUserBookings48Hours/:userId', (req, res) => {
+    const userId = req.params.userId;
+
+    // Query to select user bookings within the last 48 hours
+    const sql = `
+        SELECT *
+        FROM Rezervari
+        WHERE UtilizatorIdUtilizator = ? AND BookingTimestamp >= strftime('%Y-%m-%d %H:%M:%S', 'now', '-2 days')
+    `;
+
+    // Execute the query with parameters
+    db.all(sql, [userId], (err, rows) => {
+        if (err) {
+            console.error(err.message);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            res.json(rows);
+        }
+    });
+});
+
 // Endpoint to get counts of user bookings and reviews for a location
 app.get('/userBookingReviewCount/:userId/:locationId', (req, res) => {
     const { userId, locationId } = req.params;
