@@ -15,15 +15,15 @@ export default function LocationCalendar({ locationId }) {
                     const checkOutParts = booking.CheckOutDate.split('-');
 
                     const startDate = new Date(
-                        checkInParts[2], // Year
+                        checkInParts[0], // Year
                         checkInParts[1] - 1, // Month (zero-indexed)
-                        checkInParts[0] // Day
+                        checkInParts[2] // Day
                     );
 
                     const endDate = new Date(
-                        checkOutParts[2], // Year
+                        checkOutParts[0], // Year
                         checkOutParts[1] - 1, // Month (zero-indexed)
-                        checkOutParts[0] // Day
+                        checkOutParts[2] // Day
                     );
 
                     return { startDate, endDate };

@@ -406,15 +406,15 @@ function checkOverlap(reservation, startDate, endDate) {
     }
 
     const parts1 = reservation.CheckInDate.split('-');
-    const day1 = parseInt(parts1[0], 10);
+    const year1 = parseInt(parts1[0], 10);
     const month1 = parseInt(parts1[1], 10) - 1; // Subtract 1 because months are zero-based
-    const year1 = parseInt(parts1[2], 10)
+    const day1 = parseInt(parts1[2], 10)
     const reservationStartDate = new Date(year1, month1, day1);
 
     const parts2 = reservation.CheckOutDate.split('-');
-    const day2 = parseInt(parts2[0], 10);
+    const year2 = parseInt(parts2[0], 10);
     const month2 = parseInt(parts2[1], 10) - 1; // Subtract 1 because months are zero-based
-    const year2 = parseInt(parts2[2], 10);
+    const day2 = parseInt(parts2[2], 10);
     const reservationEndDate = new Date(year2, month2, day2);
 
     const parts3 = startDate.split('-');
@@ -432,7 +432,7 @@ function checkOverlap(reservation, startDate, endDate) {
 
     return (
         filterStartDate <= reservationEndDate && filterEndDate >= reservationStartDate ||
-        filterStartDate >= reservationStartDate && filterEndDate >= reservationEndDate ||
+        // filterStartDate >= reservationStartDate && filterEndDate >= reservationEndDate ||
         filterStartDate <= reservationStartDate && filterEndDate >= reservationEndDate ||
         filterStartDate >= reservationStartDate && filterEndDate <= reservationEndDate
     );
@@ -509,7 +509,7 @@ app.get('/getAllUserBookings48Hours/:userId', (req, res) => {
     const sql = `
         SELECT *
         FROM Rezervari
-        WHERE UtilizatorIdUtilizator = ? AND BookingTimestamp >= strftime('%Y-%m-%d %H:%M:%S', 'now', '-2 days')
+        WHERE UtilizatorIdUtilizator = ? AND BookingTimestamp >= strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime', '-2 days')
     `;
 
     // Execute the query with parameters
@@ -529,7 +529,7 @@ app.get('/userBookingReviewCount/:userId/:locationId', (req, res) => {
 
     // Count bookings
     db.get(
-        `SELECT COUNT(*) AS bookingCount FROM Rezervari WHERE UtilizatorIdUtilizator = ? AND LocatiiIdLocatie2 = ? AND Status = 'DONE' AND CheckOutDate < date('now')`,
+        `SELECT COUNT(*) AS bookingCount FROM Rezervari WHERE UtilizatorIdUtilizator = ? AND LocatiiIdLocatie2 = ? AND Status = 'DONE' AND CheckOutDate < date('now', 'localtime')`,
         [userId, locationId],
         (err, bookingRow) => {
             if (err) {
@@ -619,3 +619,14 @@ function getSingleResult(query, params) {
     });
 }
 
+// Define a GET endpoint to retrieve the current local time
+app.get('/localTime', (req, res) => {
+    db.get("SELECT datetime('now', 'localtime', '+03:00') AS current_time", (err, row) => {
+        if (err) {
+            console.error("Error retrieving local time:", err);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            res.json({ localTime: row.current_time });
+        }
+    });
+});
