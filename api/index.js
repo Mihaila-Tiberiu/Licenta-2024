@@ -486,6 +486,21 @@ app.get('/getLocationBookings/:placeId', (req, res) => {
     });
 });
 
+// Get all user bookings of a location (AS CLIENT)
+app.get('/getAllUserBookings/:userId', (req, res) => {
+    const userId = req.params.userId;
+
+    db.all(`SELECT * FROM Rezervari WHERE UtilizatorIdUtilizator = ? 
+    `, [userId], (err, rows) => {
+        if (err) {
+            console.error(err.message);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            res.json(rows);
+        }
+    });
+});
+
 // Endpoint to get counts of user bookings and reviews for a location
 app.get('/userBookingReviewCount/:userId/:locationId', (req, res) => {
     const { userId, locationId } = req.params;

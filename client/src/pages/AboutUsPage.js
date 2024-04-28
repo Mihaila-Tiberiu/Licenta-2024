@@ -58,6 +58,11 @@ export default function AboutUsPage() {
                     <br />
                     <br />
 
+                    <h2 className='font-bold'>Pot să modific o rezervare?</h2>
+                    <span style={alineat}>Nu, rezervările nu mai pot fi modificate după efectuarea plății. Cu toate acestea, în primele 48 ore de la rezervare, aveți posibilitatea să anulați rezervarea și să creați alta. </span>
+                    <br />
+                    <br />
+
                     <h2 className='font-bold'>De ce nu pot lăsa o recenzie unei locații?</h2>
                     <span style={alineat}>Numai utilizatorii care au avut în trecut un sejur îndeplinit la respectiva locație pot lăsa recenzii. De asemenea, un utilizator poate lăsa o singură recenzie pe sejur.</span>
                     <br />
