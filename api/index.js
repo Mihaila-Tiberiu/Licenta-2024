@@ -430,12 +430,19 @@ function checkOverlap(reservation, startDate, endDate) {
     const year4 = parseInt(parts4[2], 10);
     const filterEndDate = new Date(year4, month4, day4);
 
-    return (
-        filterStartDate <= reservationEndDate && filterEndDate >= reservationStartDate ||
-        // filterStartDate >= reservationStartDate && filterEndDate >= reservationEndDate ||
-        filterStartDate <= reservationStartDate && filterEndDate >= reservationEndDate ||
-        filterStartDate >= reservationStartDate && filterEndDate <= reservationEndDate
-    );
+    if (reservationEndDate < filterStartDate || reservationStartDate > filterEndDate) {
+        return false; // "No collision"
+    } else if (reservationStartDate <= filterStartDate && reservationEndDate >= filterEndDate) {
+        return true; // "Complete overlap"
+    } else if (reservationStartDate >= filterStartDate && reservationEndDate <= filterEndDate) {
+        return true; // "Complete overlap"
+    } else if (reservationStartDate >= filterStartDate && reservationStartDate <= filterEndDate) {
+        return true; // "Partial overlap"
+    } else if (reservationEndDate >= filterStartDate && reservationEndDate <= filterEndDate) {
+        return true; // "Partial overlap"
+    } else {
+        return false; // "No collision"
+    }
 }
 
 app.get('/filterLocations', filterLocations);
