@@ -478,6 +478,20 @@ app.get('/getLocationReviews/:placeId', (req, res) => {
     });
 });
 
+// Get all the reviews of a location
+app.get('/getLocationReviews/:placeId', (req, res) => {
+    const placeId = req.params.placeId;
+
+    db.all('SELECT * FROM Recenzii WHERE LocatieIdLocatie = ?', [placeId], (err, rows) => {
+        if (err) {
+            console.error(err.message);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            res.json(rows);
+        }
+    });
+});
+
 // Get all the bookings of a location
 app.get('/getLocationBookings/:placeId', (req, res) => {
     const placeId = req.params.placeId;
@@ -512,11 +526,13 @@ app.get('/getAllUserBookings/:userId', (req, res) => {
 app.get('/getAllUserBookings48Hours/:userId', (req, res) => {
     const userId = req.params.userId;
 
-    // Query to select user bookings within the last 48 hours
+    // Query to select user bookings within the last 48 hours excluding cancelled bookings
     const sql = `
         SELECT *
         FROM Rezervari
-        WHERE UtilizatorIdUtilizator = ? AND BookingTimestamp >= strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime', '-2 days')
+        WHERE UtilizatorIdUtilizator = ? 
+        AND BookingTimestamp >= strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime', '-2 days')
+        AND Status NOT IN ('Cancelled by guest', 'Cancelled by host', 'DONE', 'RESERVED')
     `;
 
     // Execute the query with parameters
@@ -529,6 +545,7 @@ app.get('/getAllUserBookings48Hours/:userId', (req, res) => {
         }
     });
 });
+
 
 // Endpoint to get counts of user bookings and reviews for a location
 app.get('/userBookingReviewCount/:userId/:locationId', (req, res) => {
@@ -628,12 +645,93 @@ function getSingleResult(query, params) {
 
 // Define a GET endpoint to retrieve the current local time
 app.get('/localTime', (req, res) => {
-    db.get("SELECT datetime('now', 'localtime', '+03:00') AS current_time", (err, row) => {
+    db.get("SELECT datetime('now', 'localtime') AS current_time", (err, row) => {
         if (err) {
             console.error("Error retrieving local time:", err);
             res.status(500).json({ error: 'Internal Server Error' });
         } else {
             res.json({ localTime: row.current_time });
         }
+    });
+});
+
+app.get('/api/LocationInfo/:IdLocatie', (req, res) => {
+    const IdLocatie = req.params.IdLocatie;
+  
+    const sql = `
+        SELECT L.IdLocatie AS LocatiiLocatieId, I.IdLocatie AS ImaginiLocatieId, L.*, I.*
+        FROM Locatii L
+        LEFT JOIN Imagini I ON L.IdLocatie = I.IdLocatie
+        WHERE L.IdLocatie = ?
+    `;
+  
+    db.all(sql, [IdLocatie], (err, rows) => {
+        if (err) {
+            console.error('Error retrieving locations:', err.message);
+            res.status(500).json({ error: 'Failed to retrieve locations' });
+            return;
+        }
+  
+        const locations = {};
+  
+        rows.forEach(row => {
+            const locationId = row.LocatiiLocatieId;
+            if (!locations[locationId]) {
+                locations[locationId] = {
+                    IdLocatie: row.LocatiiLocatieId,
+                    UtilizatorIdUtilizator: row.UtilizatorIdUtilizator,
+                    Descriere: row.Descriere,
+                    Adresa: row.Adresa,
+                    Nume: row.Nume,
+                    Oras: row.Oras,
+                    Judet: row.Judet,
+                    Rating: row.Rating,
+                    Capacitate: row.Capacitate,
+                    PretPeZi: row.PretPeZi,
+                    Facilitati: row.Facilitati,
+                    images: []
+                };
+            }
+  
+            // Assuming you have an array `locations` and you are pushing images into it
+            if (row.IdImagine) {
+                locations[locationId].images.push({
+                    IdImagine: row.IdImagine,
+                    IdLocatie: row.ImaginiLocatieId,
+                    URLimagine: row.URLimagine
+                });
+
+                // Sort the images array by IdImagine in ascending order
+                locations[locationId].images.sort((a, b) => a.IdImagine - b.IdImagine);
+            }   
+
+        });
+  
+        const locationsArray = Object.values(locations);
+  
+        res.json({ locations: locationsArray });
+    });
+});
+
+// Backend method to cancel booking by customer
+app.put('/cancelBookingByCustomer/:bookingId', (req, res) => {
+    const bookingId = req.params.bookingId;
+
+    // Update the booking status to "Cancelled by customer" in the database
+    const sql = `
+        UPDATE Rezervari
+        SET Status = 'Cancelled by guest'
+        WHERE IdRezervare = ?
+    `;
+
+    db.run(sql, [bookingId], function(err) {
+        if (err) {
+            console.error('Error updating booking status:', err.message);
+            res.status(500).json({ error: 'Internal Server Error' });
+            return;
+        }
+
+        console.log(`Booking ${bookingId} cancelled by guest successfully.`);
+        res.json({ message: `Booking ${bookingId} cancelled by guest successfully.` });
     });
 });
