@@ -522,6 +522,21 @@ app.get('/getAllUserBookings/:userId', (req, res) => {
     });
 });
 
+// Get all user bookings of a location (AS HOST)
+app.get('/getAllUserBookingsHOST/:userId', (req, res) => {
+    const userId = req.params.userId;
+
+    db.all(`SELECT * FROM Rezervari WHERE UtilizatorIdUtilizator2 = ? 
+    `, [userId], (err, rows) => {
+        if (err) {
+            console.error(err.message);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            res.json(rows);
+        }
+    });
+});
+
 // Get all user bookings within the last 48 hours (AS CLIENT)
 app.get('/getAllUserBookings48Hours/:userId', (req, res) => {
     const userId = req.params.userId;
@@ -531,6 +546,30 @@ app.get('/getAllUserBookings48Hours/:userId', (req, res) => {
         SELECT *
         FROM Rezervari
         WHERE UtilizatorIdUtilizator = ? 
+        AND BookingTimestamp >= strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime', '-2 days')
+        AND Status NOT IN ('Cancelled by guest', 'Cancelled by host', 'DONE', 'RESERVED')
+    `;
+
+    // Execute the query with parameters
+    db.all(sql, [userId], (err, rows) => {
+        if (err) {
+            console.error(err.message);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            res.json(rows);
+        }
+    });
+});
+
+// Get all user bookings within the last 48 hours (AS HOST)
+app.get('/getAllUserBookings48HoursHOST/:userId', (req, res) => {
+    const userId = req.params.userId;
+
+    // Query to select user bookings within the last 48 hours excluding cancelled bookings
+    const sql = `
+        SELECT *
+        FROM Rezervari
+        WHERE UtilizatorIdUtilizator2 = ? 
         AND BookingTimestamp >= strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime', '-2 days')
         AND Status NOT IN ('Cancelled by guest', 'Cancelled by host', 'DONE', 'RESERVED')
     `;
@@ -733,5 +772,28 @@ app.put('/cancelBookingByCustomer/:bookingId', (req, res) => {
 
         console.log(`Booking ${bookingId} cancelled by guest successfully.`);
         res.json({ message: `Booking ${bookingId} cancelled by guest successfully.` });
+    });
+});
+
+// Backend method to cancel booking by host
+app.put('/cancelBookingByHost/:bookingId', (req, res) => {
+    const bookingId = req.params.bookingId;
+
+    // Update the booking status to "Cancelled by customer" in the database
+    const sql = `
+        UPDATE Rezervari
+        SET Status = 'Cancelled by host'
+        WHERE IdRezervare = ?
+    `;
+
+    db.run(sql, [bookingId], function(err) {
+        if (err) {
+            console.error('Error updating booking status:', err.message);
+            res.status(500).json({ error: 'Internal Server Error' });
+            return;
+        }
+
+        console.log(`Booking ${bookingId} cancelled by host successfully.`);
+        res.json({ message: `Booking ${bookingId} cancelled by host successfully.` });
     });
 });

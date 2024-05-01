@@ -74,7 +74,7 @@ export default function MyBookingsPage() {
                             <p>Date rezervate: {booking.CheckInDate} - {booking.CheckOutDate}</p>
                             <p>Pret total: {booking.Pret}</p>
                             <p>Data și ora rezervării: {booking.BookingTimestamp}</p>
-                            <p>Status {booking.Status}</p>
+                            <p>Status: {booking.Status}</p>
                         </div>
                     </div>
                         {next48hrsUserBookings.find(item => item.IdRezervare === booking.IdRezervare) && (
