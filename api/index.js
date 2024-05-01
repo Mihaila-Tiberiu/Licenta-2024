@@ -37,7 +37,7 @@ app.get('/test', (req, res) => {
 
 // Inserare utilizator nou in DB
 app.post('/register', (req, res) => {
-    const { username, email, password } = req.body;
+    const { username, email, password, phone } = req.body;
     
     // Verificam daca utilizatorul exista deja
     db.get(`SELECT * FROM Utilizatori WHERE Username = ?`, [username], (err, row) => {
@@ -52,8 +52,8 @@ app.post('/register', (req, res) => {
         } else {
             // Daca nu se gaseste utilizatorul, se continua procesul de inregistrare
             const encryptedPassword = bcrypt.hashSync(password, bcryptSalt);
-            const query = `INSERT INTO Utilizatori(Username, Email, Password) VALUES (?,?,?)`;
-            db.run(query, [username, email, encryptedPassword], (err) => {
+            const query = `INSERT INTO Utilizatori(Username, Email, Password, Phone) VALUES (?,?,?,?)`;
+            db.run(query, [username, email, encryptedPassword, phone], (err) => {
                 if (err) {
                     console.error(err.message);
                     return res.status(500).json({ error: 'Internal Server Error' });

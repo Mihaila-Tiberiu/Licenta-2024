@@ -8,6 +8,7 @@ export default function RegisterPage(){
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [phone, setPhone] = useState('');
 
     function registerUser(ev){
         ev.preventDefault();
@@ -15,6 +16,7 @@ export default function RegisterPage(){
             username,
             email,
             password,
+            phone
         })
         .then(res => {
             Alert.showAlert(res.data.message);
@@ -36,13 +38,16 @@ export default function RegisterPage(){
          <div className="mb-64">
          <h1 className="text-4xl text-center mb-4">Înregistrare</h1>
          <form className="max-w-md mx-auto" onSubmit={registerUser}>
-            <input type="text" placeholder="nume utilizator" 
+            <input type="text" placeholder="nume utilizator" required
                 value={username} 
                 onChange={ev=>setUsername(ev.target.value)} />
-            <input type="email" placeholder={"adresa@email.com"}
+            <input type="email" placeholder={"adresa@email.com"} required
                 value={email} 
                 onChange={ev=>setEmail(ev.target.value)}/>
-            <input type="password" placeholder="parola"
+            <input type="tel" placeholder={"0723456789"} pattern="[0-9]{10}" required
+                value={phone} 
+                onChange={ev=>setPhone(ev.target.value)}/>
+            <input type="password" placeholder="parola" required
                 value={password}
                 onChange={ev=>setPassword(ev.target.value)}/>
             <button className="bg-primary w-full border my-2 py-2 px-3 rounded text-white font-medium">Înregistrează-te</button>

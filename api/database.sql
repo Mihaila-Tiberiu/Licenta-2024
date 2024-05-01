@@ -2,7 +2,8 @@ CREATE TABLE Utilizatori (
     IdUtilizator INTEGER PRIMARY KEY AUTOINCREMENT,
     Username TEXT,
     Email TEXT,
-    Password TEXT
+    Password TEXT,
+    Phone TEXT
 );
 
 CREATE TABLE Locatii (
