@@ -16,7 +16,7 @@ CREATE TABLE Locatii (
     Judet TEXT,
     Rating REAL NOT NULL,
     Capacitate INTEGER NOT NULL,
-    PretPeZi REAL NOT NULL
+    PretPeZi REAL NOT NULL,
     CheckIn TEXT,
     CheckOut TEXT,
     Facilitati TEXT,

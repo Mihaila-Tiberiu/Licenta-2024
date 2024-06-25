@@ -5,6 +5,9 @@ const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 const multer = require('multer');
 const fs = require('fs');
+const bodyParser = require('body-parser');
+const { SERVICE_ID_EMAILJS, TEMPLATE_ID_EMAILJS, PUBLIC_KEY_EMAILJS, STRIPE_KEY } = require('./config.js');
+const stripe = require('stripe')(STRIPE_KEY);
 
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('./database.sqlite3', sqlite3.OPEN_READWRITE, (err)=> {
@@ -21,14 +24,12 @@ app.use(cookieParser());
 app.use('/uploads', express.static(__dirname+'/uploads'));
 app.use(express.static('images'));
 app.use('/images', express.static(__dirname+'/images'));
-app.use(cors({
-    credentials: true,
-    origin: 'http://localhost:3000'
-}));
 
-app.listen(4000, () => {
-    console.log('Server is running on port 4000');
-});
+app.use(cors({
+    origin: '*', // Allow all origins
+}));
+app.use(bodyParser.urlencoded({extended:true}));
+app.use(bodyParser.json());
 
 app.get('/test', (req, res) => {
     res.status(200);
@@ -46,9 +47,9 @@ app.post('/register', (req, res) => {
             return res.status(500).json({ error: 'Internal Server Error' });
         }
         
-        // Daca se gaseste un rand cu utilizatorul, se returneaza randul
+        // Daca se gaseste un rand cu utilizatorul, se returneaza un mesaj corespunzator
         if (row) {
-            return res.status(422).json({ error: 'Nume de utilizator deja existent' });
+            return res.status(409).json({ error: 'Nume de utilizator deja existent' });
         } else {
             // Daca nu se gaseste utilizatorul, se continua procesul de inregistrare
             const encryptedPassword = bcrypt.hashSync(password, bcryptSalt);
@@ -796,4 +797,39 @@ app.put('/cancelBookingByHost/:bookingId', (req, res) => {
         console.log(`Booking ${bookingId} cancelled by host successfully.`);
         res.json({ message: `Booking ${bookingId} cancelled by host successfully.` });
     });
+});
+
+app.post("/payment", cors(), async (req, res) => {
+    let {amount, id} = req.body
+    try {
+        const payment = await stripe.paymentIntents.create({
+            amount,
+            currency: "RON",
+            description: "Plata rezervare",
+            payment_method: id,
+            confirm: true,
+            automatic_payment_methods: {
+                enabled: true,
+                allow_redirects: 'never'
+            }
+        })
+        console.log("Payment, payment")
+        res.json({
+            message: "Payment successful",
+            success: true
+        })
+
+    } catch (error) {
+        console.log("Error", error);
+        res.json({
+            message: "Payment failed",
+            success: false
+        })
+    }
+})
+
+// Start the server
+const PORT = 4000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });

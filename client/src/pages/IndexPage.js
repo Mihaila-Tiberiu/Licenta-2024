@@ -43,7 +43,7 @@ export default function IndexPage(){
   const handleSearch = () => {
     // Redirect to listings page with parameters
     navigate(`/listings?Judet=${county}`
-    +`&Capacitate=${eventType}`
+    +`&MinCapacitate=${eventType}`
     +`&startDate=${(startDateFormatted) ? startDateFormatted : ''}`
     +`&endDate=${(endDateFormatted) ? endDateFormatted : ''}`);
   };
@@ -68,13 +68,13 @@ export default function IndexPage(){
         <div className="flex flex-wrap justify-center">
           <div className="w-full md:w-1/3 px-4">
             <div className="select-section bg-white rounded-lg shadow-xl p-6 mb-6 border-gray-300 border-2">
-              <h2 className="text-lg font-bold mb-4">Selectează județul:</h2>
+              <h2 className="text-lg font-bold mb-4">Cele mai populare județe:</h2>
               <div className="county-bubbles flex flex-wrap mb-4 ">
                 <button
                   className={`${lastClickedCounty === 'Bucharest' ? 'bg-gray-400' : 'bg-gray-200'} hover:bg-gray-300 font-semibold py-2 px-4 rounded mr-2 mb-2`}
                   onClick={() => handleCountySelect('Bucharest')}
                 >
-                  Bucharest
+                  București
                 </button>
                 <button
                   className={`${lastClickedCounty === 'Cluj County' ? 'bg-gray-400' : 'bg-gray-200'} hover:bg-gray-300 font-semibold py-2 px-4 rounded mr-2 mb-2`}
@@ -100,27 +100,34 @@ export default function IndexPage(){
 
           <div className="w-full md:w-1/3 px-4">
             <div className="select-section bg-white rounded-lg shadow-xl p-6 mb-6 border-gray-300 border-2">
-              <h2 className="text-lg font-bold mb-4">Selectează tipul de eveniment:</h2>
+              <h2 className="text-lg font-bold mb-4">Capacitatea locatiei:</h2>
                 <div className="event-type-bubbles mb-4">
                   <button
-                    className={`${lastClickedEventType === '120' ? 'bg-gray-400' : 'bg-gray-200'} hover:bg-gray-300 font-semibold py-2 px-4 rounded mr-2 mb-2`}
-                    onClick={() => handleEventTypeSelect('120')}
+                    className={`${lastClickedEventType === '50' ? 'bg-gray-400' : 'bg-gray-200'} hover:bg-gray-300 font-semibold py-2 px-4 rounded mr-2 mb-2`}
+                    onClick={() => handleEventTypeSelect('50')}
                   >
-                    Wedding
+                    50 pers.
                   </button>
                   <button
                     className={`${lastClickedEventType === '100' ? 'bg-gray-400' : 'bg-gray-200'} hover:bg-gray-300 font-semibold py-2 px-4 rounded mr-2 mb-2`}
                     onClick={() => handleEventTypeSelect('100')}
                   >
-                    Corporate
+                    100 pers.
                   </button>
+                  <button
+                    className={`${lastClickedEventType === '200' ? 'bg-gray-400' : 'bg-gray-200'} hover:bg-gray-300 font-semibold py-2 px-4 rounded mr-2 mb-2`}
+                    onClick={() => handleEventTypeSelect('200')}
+                  >
+                    200 pers.
+                  </button>
+
                 </div>
             </div>
           </div>
 
           <div className="w-full md:w-1/3 px-4">
             <div className="select-section bg-white rounded-lg shadow-xl p-6 mb-6 border-gray-300 border-2">
-              <h2 className="text-lg font-bold mb-4 pl-5">Selectează datele:</h2>
+              <h2 className="text-lg font-bold mb-4 pl-5">Selectează datele evenimentului:</h2>
               <DateRangePicker
                     startDate={startDate}
                     endDate={endDate}

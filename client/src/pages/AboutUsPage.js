@@ -53,6 +53,11 @@ export default function AboutUsPage() {
                     <br />
                     <br />
 
+                    <h2 className='font-bold'>Pot plăti cash?</h2>
+                    <span style={alineat}>Nu, platforma noastră acceptă numai plăți folosind un card bancar.</span>
+                    <br />
+                    <br />
+
                     <h2 className='font-bold'>Au trecut primele 48 ore, dar vreau să anulez o rezervare.</h2>
                     <span style={alineat}>Vă rugăm să ne <a className="text-primary underline font-semibold hover:text-green-900" href="/contact">scrieți un mesaj</a>. Vom încerca să vă ajutăm cât mai rapid cu putință.</span>
                     <br />
