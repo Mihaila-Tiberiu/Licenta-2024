@@ -4,6 +4,7 @@ import { Calendar } from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { UserContext } from '../UserContext';
+import Alert from '../Alert';
 
 export default function ReservationPage() {
     const { user, ready } = useContext(UserContext);
@@ -110,14 +111,44 @@ export default function ReservationPage() {
     };
 
     const handleDateChange = (dates) => {
-        if (dates && dates.length === 2) {
-            const formattedStartDate = formatDate(dates[0].toISOString());
-            const formattedEndDate = formatDate(dates[1].toISOString());
-            setSelectedDates([formattedStartDate, formattedEndDate]);
-        } else {
-            setSelectedDates(dates);
+        if (dates.length === 2) {
+            const [start, end] = dates;
+            let date = new Date(start);
+            let adjacentToDisabled = false;
+            let dayBeforeStart = new Date(start);
+            dayBeforeStart.setDate(dayBeforeStart.getDate() - 1);
+            let dayAfterEnd = new Date(end);
+            dayAfterEnd.setDate(dayAfterEnd.getDate() + 1);
+    
+            // Check if start or end is adjacent to disabled dates
+            if (tileDisabled({ date: dayBeforeStart, view: 'month' }) || tileDisabled({ date: dayAfterEnd, view: 'month' })) {
+                adjacentToDisabled = true;
+            }
+    
+            if (adjacentToDisabled) {
+                Alert.showAlert("Nu puteți selecta datele imediat după sau înainte de date rezervate. Vă rugăm alocați timp pentru amenajare și curățenie.");
+                setSelectedDates([]); // Reset selection
+                return;
+            }
+    
+            let allValid = true;
+            while (date <= end) {
+                if (tileDisabled({ date, view: 'month' })) {
+                    allValid = false;
+                    break;
+                }
+                date.setDate(date.getDate() + 1);
+            }
+    
+            if (allValid) {
+                setSelectedDates([start.toISOString().split('T')[0], end.toISOString().split('T')[0]]);
+            } else {
+                Alert.showAlert("Intervalul selectat contine date rezervate. Vă rugăm selectați alt interval.");
+                setSelectedDates([]); // Reset selection
+            }
         }
     };
+    
 
     const formatDate = (date) => {
         return date.split('T')[0]; // This will return the date part before 'T'
@@ -199,7 +230,7 @@ export default function ReservationPage() {
                 cvc,
             });
     
-            alert('Reservation created successfully');
+            Alert.showAlert('Rezervare creată cu succes!');
             navigate('/success');
         } catch (error) {
             console.error('Error creating reservation:', error);
@@ -230,15 +261,16 @@ export default function ReservationPage() {
     }
 
     return (
-        <div className="reservation-container p-4 max-w-xl mx-auto bg-white shadow-md rounded-md">
-            <h2 className="text-xl font-bold mb-4">Select Date Range</h2>
+        <div className="reservation-container mt-4 p-4 max-w-xl mx-auto bg-white shadow-lg border-gray-300 border-2 rounded-md">
+            <h2 className="text-xl font-bold mb-4">Selectați datele rezervării</h2>
             <Calendar
                 selectRange
                 tileDisabled={tileDisabled}
                 onChange={handleDateChange}
                 className="mb-4"
             />
-            <h2 className="text-xl font-bold mb-4">Card Details</h2>
+            <h3 className='text-red-600 mb-2'>*Nu puteți selecta datele imediat după sau înainte de date rezervate. Vă rugăm alocați timp pentru amenajare și curățenie!</h3>
+            <h2 className="text-xl font-bold mb-4">Detaliile cardului</h2>
             <input
                 type="text"
                 value={cardNumber}
@@ -266,13 +298,13 @@ export default function ReservationPage() {
                 required
                 className="w-full px-3 py-2 mb-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            <h2 className="text-xl font-bold mb-4">Total Price: {price} RON</h2>
+            <h2 className="text-xl font-bold mb-4">Preț total: {price} RON</h2>
             <button
                 onClick={handleReservationSubmit}
                 className="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 disabled:bg-gray-400 disabled:cursor-not-allowed"
                 disabled={!isFormValid()}
             >
-                Submit Reservation
+                Efectuați rezervarea
             </button>
         </div>
     );

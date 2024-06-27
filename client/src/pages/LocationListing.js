@@ -142,6 +142,7 @@ export default function LocationListing() {
                 </div>
             </div>
             <div className="mt-8 w-1/2 mx-auto bg-white rounded-lg shadow-xl p-6 mb-6 border-gray-300 border-2">
+                <h2 className="text-xl font-bold mb-4">Recenzii ale utilizatorilor:</h2>
                 {displayReviewForm && (
                     <form onSubmit={(e) => handleSubmitReview(e, rating, comment)} className="mb-8 bg-white rounded-lg shadow-xl p-6 border-gray-300 border-2">
                         <label className="block  text-sm font-bold mb-2">
