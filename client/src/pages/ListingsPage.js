@@ -313,13 +313,13 @@ const ListingsPage = () => {
         </div>
         )}
         <div className="w-2/4 mx-auto">
-        {filteredFinalLocations.length > 0 && filteredFinalLocations.map(location => (
+    {filteredFinalLocations.length > 0 ? (
+        filteredFinalLocations.map(location => (
             <Link to={'/listings/'+location.IdLocatie} key={location.IdLocatie} className="bg-gray-200 p-4 rounded-2xl flex gap-4 mt-4 cursor-pointer border-2 border-gray-300 shadow-lg relative">
                 <div className="bg-gray-300 w-48 h-48 rounded-2xl border overflow-hidden relative">
                     {location.images.length > 0 && (
                         <img className="w-full h-full object-cover object-center" src={`http://localhost:4000/uploads/${location.images[0].URLimagine}`} alt="" />
                     )}
-                    
                 </div>
                 <div className="flex flex-col justify-between">
                     <div>
@@ -332,8 +332,12 @@ const ListingsPage = () => {
                     </div>
                 </div>
             </Link>
-        ))}
-        </div>
+        ))
+    ) : (
+        <h1 className="text-center text-xl mt-10">Nu există rezultate pentru căutarea dumneavoastră. Încercați alte filtre.</h1>
+    )}
+</div>
+
     </div>
   );
 };
