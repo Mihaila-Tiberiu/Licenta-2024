@@ -497,7 +497,7 @@ app.get('/getLocationReviews/:placeId', (req, res) => {
 app.get('/getLocationBookings/:placeId', (req, res) => {
     const placeId = req.params.placeId;
 
-    db.all(`SELECT * FROM Rezervari WHERE LocatiiIdLocatie2 = ? AND (Status = 'DONE' OR Status = 'PENDING' OR Status = 'RESERVED')
+    db.all(`SELECT * FROM Rezervari WHERE LocatiiIdLocatie2 = ? AND (Status = 'Completa' OR Status = 'In asteptare' OR Status = 'Rezervata')
     `, [placeId], (err, rows) => {
         if (err) {
             console.error(err.message);
@@ -508,11 +508,11 @@ app.get('/getLocationBookings/:placeId', (req, res) => {
     });
 });
 
-// Get all user bookings of a location (AS CLIENT)
+// Get all user bookings (AS CLIENT)
 app.get('/getAllUserBookings/:userId', (req, res) => {
     const userId = req.params.userId;
 
-    db.all(`SELECT * FROM Rezervari WHERE UtilizatorIdUtilizator = ? 
+    db.all(`SELECT * FROM Rezervari WHERE UtilizatorIdUtilizator = ? ORDER BY IdRezervare DESC
     `, [userId], (err, rows) => {
         if (err) {
             console.error(err.message);
@@ -523,11 +523,11 @@ app.get('/getAllUserBookings/:userId', (req, res) => {
     });
 });
 
-// Get all user bookings of a location (AS HOST)
+// Get all user bookings (AS HOST)
 app.get('/getAllUserBookingsHOST/:userId', (req, res) => {
     const userId = req.params.userId;
 
-    db.all(`SELECT * FROM Rezervari WHERE UtilizatorIdUtilizator2 = ? 
+    db.all(`SELECT * FROM Rezervari WHERE UtilizatorIdUtilizator2 = ? ORDER BY IdRezervare DESC
     `, [userId], (err, rows) => {
         if (err) {
             console.error(err.message);
@@ -548,8 +548,8 @@ app.get('/getAllUserBookings48Hours/:userId', (req, res) => {
         FROM Rezervari
         WHERE UtilizatorIdUtilizator = ? 
         AND BookingTimestamp >= strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime', '-2 days')
-        AND Status NOT IN ('Cancelled by guest', 'Cancelled by host', 'DONE', 'RESERVED')
-    `;
+        AND Status NOT IN ('Anulata de oaspete', 'Anulata de gazda', 'Completa', 'Rezervata') ORDER BY IdRezervare DESC
+    `;//, 'In asteptare')
 
     // Execute the query with parameters
     db.all(sql, [userId], (err, rows) => {
@@ -572,8 +572,8 @@ app.get('/getAllUserBookings48HoursHOST/:userId', (req, res) => {
         FROM Rezervari
         WHERE UtilizatorIdUtilizator2 = ? 
         AND BookingTimestamp >= strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime', '-2 days')
-        AND Status NOT IN ('Cancelled by guest', 'Cancelled by host', 'DONE', 'RESERVED')
-    `;
+        AND Status NOT IN ('Anulata de oaspete', 'Anulata de gazda', 'Completa', 'Rezervata') ORDER BY IdRezervare DESC
+    `;//, 'In asteptare')
 
     // Execute the query with parameters
     db.all(sql, [userId], (err, rows) => {
@@ -593,7 +593,7 @@ app.get('/userBookingReviewCount/:userId/:locationId', (req, res) => {
 
     // Count bookings
     db.get(
-        `SELECT COUNT(*) AS bookingCount FROM Rezervari WHERE UtilizatorIdUtilizator = ? AND LocatiiIdLocatie2 = ? AND Status = 'DONE' AND CheckOutDate < date('now', 'localtime')`,
+        `SELECT COUNT(*) AS bookingCount FROM Rezervari WHERE UtilizatorIdUtilizator = ? AND LocatiiIdLocatie2 = ? AND Status = 'Completa' AND CheckOutDate < date('now', 'localtime')`,
         [userId, locationId],
         (err, bookingRow) => {
             if (err) {
@@ -753,80 +753,171 @@ app.get('/api/LocationInfo/:IdLocatie', (req, res) => {
     });
 });
 
-// Backend method to cancel booking by customer
-app.put('/cancelBookingByCustomer/:bookingId', (req, res) => {
-    const bookingId = req.params.bookingId;
-
-    // Update the booking status to "Cancelled by customer" in the database
-    const sql = `
-        UPDATE Rezervari
-        SET Status = 'Cancelled by guest'
-        WHERE IdRezervare = ?
-    `;
-
-    db.run(sql, [bookingId], function(err) {
-        if (err) {
-            console.error('Error updating booking status:', err.message);
-            res.status(500).json({ error: 'Internal Server Error' });
-            return;
-        }
-
-        console.log(`Booking ${bookingId} cancelled by guest successfully.`);
-        res.json({ message: `Booking ${bookingId} cancelled by guest successfully.` });
-    });
-});
+///////
 
 // Backend method to cancel booking by host
 app.put('/cancelBookingByHost/:bookingId', (req, res) => {
     const bookingId = req.params.bookingId;
 
-    // Update the booking status to "Cancelled by customer" in the database
-    const sql = `
+    const updateBookingSql = `
         UPDATE Rezervari
-        SET Status = 'Cancelled by host'
+        SET Status = 'Anulata de gazda'
         WHERE IdRezervare = ?
     `;
 
-    db.run(sql, [bookingId], function(err) {
+    db.run(updateBookingSql, [bookingId], function(err) {
         if (err) {
             console.error('Error updating booking status:', err.message);
             res.status(500).json({ error: 'Internal Server Error' });
             return;
         }
 
-        console.log(`Booking ${bookingId} cancelled by host successfully.`);
-        res.json({ message: `Booking ${bookingId} cancelled by host successfully.` });
+        const updatePaymentSql = `
+            UPDATE Plati
+            SET Status = 'Fonduri returnate integral oaspetelui'
+            WHERE RezervareIdRezervare = ?
+        `;
+
+        db.run(updatePaymentSql, [bookingId], function(err) {
+            if (err) {
+                console.error('Error updating payment status:', err.message);
+                res.status(500).json({ error: 'Internal Server Error' });
+                return;
+            }
+
+            console.log(`Booking ${bookingId} and payment cancelled by host successfully.`);
+            res.json({ message: `Booking ${bookingId} and payment cancelled by host successfully.` });
+        });
     });
 });
 
-app.post("/payment", cors(), async (req, res) => {
-    let {amount, id} = req.body
-    try {
-        const payment = await stripe.paymentIntents.create({
-            amount,
-            currency: "RON",
-            description: "Plata rezervare",
-            payment_method: id,
-            confirm: true,
-            automatic_payment_methods: {
-                enabled: true,
-                allow_redirects: 'never'
-            }
-        })
-        console.log("Payment, payment")
-        res.json({
-            message: "Payment successful",
-            success: true
-        })
+// Backend method to cancel booking by customer
+app.put('/cancelBookingByCustomer/:bookingId', (req, res) => {
+    const bookingId = req.params.bookingId;
 
-    } catch (error) {
-        console.log("Error", error);
-        res.json({
-            message: "Payment failed",
-            success: false
-        })
+    const updateBookingSql = `
+        UPDATE Rezervari
+        SET Status = 'Anulata de oaspete'
+        WHERE IdRezervare = ?
+    `;
+
+    db.run(updateBookingSql, [bookingId], function(err) {
+        if (err) {
+            console.error('Error updating booking status:', err.message);
+            res.status(500).json({ error: 'Internal Server Error' });
+            return;
+        }
+
+        const updatePaymentSql = `
+            UPDATE Plati
+            SET Status = 'Fonduri returnate integral oaspetelui'
+            WHERE RezervareIdRezervare = ?
+        `;
+
+        db.run(updatePaymentSql, [bookingId], function(err) {
+            if (err) {
+                console.error('Error updating payment status:', err.message);
+                res.status(500).json({ error: 'Internal Server Error' });
+                return;
+            }
+
+            console.log(`Booking ${bookingId} and payment cancelled by customer successfully.`);
+            res.json({ message: `Booking ${bookingId} and payment cancelled by customer successfully.` });
+        });
+    });
+});
+
+app.post('/createPayment', (req, res) => {
+    const { reservationId, cardNumber, expDate, cvc } = req.body;
+    const lastFourDigits = cardNumber.slice(-4);
+
+    const sql = `
+        INSERT INTO Plati (RezervareIdRezervare, ModalitatePlata, Status)
+        VALUES (?, ?, 'In asteptare')
+    `;
+    const params = [reservationId, `Card ending in ${lastFourDigits}`];
+
+    db.run(sql, params, function(err) {
+        if (err) {
+            console.error('Error creating payment:', err.message);
+            res.status(500).json({ error: 'Internal Server Error' });
+            return;
+        }
+        res.json({ id: this.lastID });
+    });
+});
+
+// Backend code for creating a reservation
+app.post('/createReservation', (req, res) => {
+    const { userId, locationId, hostId, checkInDate, checkOutDate, price } = req.body;
+
+    if (!userId || !locationId || !checkInDate || !checkOutDate || !price || !hostId) {
+        console.error('Missing required fields:', { userId, locationId, hostId, checkInDate, checkOutDate, price });
+        res.status(400).json({ error: 'Missing required fields' });
+        return;
     }
-})
+
+    const sql = `
+        INSERT INTO Rezervari (UtilizatorIdUtilizator, LocatiiIdLocatie2, UtilizatorIdUtilizator2, CheckInDate, CheckOutDate, Pret, Status, BookingTimestamp)
+        VALUES (?, ?, ?, ?, ?, ?, 'In asteptare', datetime('now'))
+    `;
+    const params = [userId, locationId, hostId, checkInDate, checkOutDate, price];
+
+    db.run(sql, params, function (err) {
+        if (err) {
+            console.error('Error creating reservation:', err.message);
+            res.status(500).json({ error: 'Internal Server Error' });
+            return;
+        }
+        res.json({ id: this.lastID });
+    });
+});
+
+
+const cron = require('node-cron');
+const updateReservationsAndPayments = () => {
+    const now = new Date();
+    const twoDaysAgo = new Date(now);
+    twoDaysAgo.setHours(now.getHours() - 48);
+
+    const formattedTwoDaysAgo = twoDaysAgo.toISOString().slice(0, 19).replace('T', ' ');
+
+    const updateReservationsSql = `
+        UPDATE Rezervari
+        SET Status = 'Rezervata'
+        WHERE Status = 'In asteptare' AND BookingTimestamp <= ?
+    `;
+
+    const updatePaymentsSql = `
+        UPDATE Plati
+        SET Status = 'Fonduri transferate in conturile Occasionest (10%) si gazdei (90%)'
+        WHERE Status = 'In asteptare' AND RezervareIdRezervare IN (
+            SELECT IdRezervare FROM Rezervari WHERE Status = 'Rezervata'
+        )
+    `;
+
+    db.run(updateReservationsSql, [formattedTwoDaysAgo], function (err) {
+        if (err) {
+            return console.error('Error updating reservations:', err.message);
+        }
+        console.log(`Updated ${this.changes} reservations to 'Rezervata'.`);
+
+        db.run(updatePaymentsSql, function (err) {
+            if (err) {
+                return console.error('Error updating payments:', err.message);
+            }
+            console.log(`Updated ${this.changes} payments to 'Fonduri transferate in conturile Occasionest (10%) si gazdei (90%)'.`);
+        });
+    });
+};
+
+// Schedule the cron job to run at 1 AM every day
+cron.schedule('0 1 * * *', () => {
+    console.log('Running cron job to update reservations and payments...');
+    updateReservationsAndPayments();
+}, {
+    timezone: "Europe/Bucharest"
+});
 
 // Start the server
 const PORT = 4000;

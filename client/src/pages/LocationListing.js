@@ -68,6 +68,7 @@ export default function LocationListing() {
         console.log('Location Reviews Array:', locationReviewsArray);
         console.log('UserId:', userId);
         console.log(bookingCount, reviewCount, comment, rating);
+        window.location.href = `/reservation?locationId=${locationId}`;
     };
 
     const handleSubmitReview = async (e, rating, comment) => {

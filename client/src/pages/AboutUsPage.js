@@ -29,7 +29,7 @@ export default function AboutUsPage() {
                 </h2>
                 <div className='text-lg'>
                     <h2 className='font-bold'>Cât costă publicarea unui anunț?</h2>
-                    <span style={alineat}>Publicarea anunțurilor prin intermediul platformei noastre este în totalitate gratuită! Orice cont de utilizator poate fi folosit gratuit atât pentru publicarea anunțurilor, cât și pentru realizarea de rezervări.</span>
+                    <span style={alineat}>Publicarea anunțurilor prin intermediul platformei noastre este în totalitate gratuită! Orice cont de utilizator poate fi folosit gratuit atât pentru publicarea anunțurilor, cât și pentru realizarea de rezervări. Cu toate acestea, OccasioNest reține o taxă de 10% pentru orice rezervare îndeplinită cu succes.</span>
                     <br />
                     <br />
 

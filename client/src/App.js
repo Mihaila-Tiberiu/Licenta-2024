@@ -11,7 +11,9 @@ import ListingsPage from './pages/ListingsPage';
 import LocationListing from './pages/LocationListing';
 import ContactUsPage from './pages/ContactUsPage';
 import AboutUsPage from './pages/AboutUsPage';
-import BookingPage from './pages/BookingPage.js';
+import ReservationPage from './pages/ReservationPage.js';
+import SuccessPage from './pages/SuccessPage.js';
+import ErrorPage from './pages/ErrorPage.js';
 
 axios.defaults.baseURL = 'http://localhost:4000';
 axios.defaults.withCredentials = true;
@@ -30,7 +32,9 @@ function App() {
           <Route path="/account/:subpage/:action" element={<AccountPage />} />
           <Route exact path="/listings" element={<ListingsPage />} />
           <Route path="/listings/:locationId?" element={<LocationListing />} />
-          <Route path="/booking" element={<BookingPage />} />
+          <Route path="/reservation" element={<ReservationPage/>} />
+          <Route path="/success" element={<SuccessPage/>} />
+          <Route path="/error" element={<ErrorPage/>} />
         </Route>
       </Routes>
     </UserContextProvider>
