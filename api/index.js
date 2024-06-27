@@ -6,8 +6,7 @@ const cookieParser = require('cookie-parser');
 const multer = require('multer');
 const fs = require('fs');
 const bodyParser = require('body-parser');
-const { SERVICE_ID_EMAILJS, TEMPLATE_ID_EMAILJS, PUBLIC_KEY_EMAILJS, STRIPE_KEY } = require('./config.js');
-const stripe = require('stripe')(STRIPE_KEY);
+const { SERVICE_ID_EMAILJS, TEMPLATE_ID_EMAILJS, PUBLIC_KEY_EMAILJS} = require('./config.js');
 
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('./database.sqlite3', sqlite3.OPEN_READWRITE, (err)=> {
@@ -869,8 +868,10 @@ app.post('/createReservation', (req, res) => {
             res.status(500).json({ error: 'Internal Server Error' });
             return;
         }
+        console.log("Reservation created with ID: ", this.lastID);
         res.json({ id: this.lastID });
     });
+
 });
 
 
@@ -878,7 +879,7 @@ const cron = require('node-cron');
 const updateReservationsAndPayments = () => {
     const now = new Date();
     const twoDaysAgo = new Date(now);
-    twoDaysAgo.setHours(now.getHours() - 1);//48 in loc de 1
+    twoDaysAgo.setHours(now.getHours() - 48);  // Set to 48 hours ago
 
     const formattedTwoDaysAgo = twoDaysAgo.toISOString().slice(0, 19).replace('T', ' ');
 
@@ -896,31 +897,90 @@ const updateReservationsAndPayments = () => {
         )
     `;
 
+    const updatePastReservationsSql = `
+        UPDATE Rezervari
+        SET Status = 'Completa'
+        WHERE Status = 'Rezervata' AND CheckoutDate <= ?
+    `;
+
+    // Update reservations to 'Rezervata'
     db.run(updateReservationsSql, [formattedTwoDaysAgo], function (err) {
         if (err) {
             return console.error('Error updating reservations:', err.message);
         }
         console.log(`Updated ${this.changes} reservations to 'Rezervata'.`);
 
+        // Update payments for reservations now set to 'Rezervata'
         db.run(updatePaymentsSql, function (err) {
             if (err) {
                 return console.error('Error updating payments:', err.message);
             }
             console.log(`Updated ${this.changes} payments to 'Fonduri transferate in conturile Occasionest (10%) si gazdei (90%)'.`);
+
+            // Update reservations to 'Completa' where the checkout date is in the past
+            db.run(updatePastReservationsSql, [now.toISOString().slice(0, 19).replace('T', ' ')], function (err) {
+                if (err) {
+                    return console.error('Error updating past reservations:', err.message);
+                }
+                console.log(`Updated ${this.changes} past due reservations to 'Completa'.`);
+            });
         });
     });
 };
 
+
 // Schedule the cron job to run at 1 AM every day
-cron.schedule('15 16 * * *', () => { // 16:15 setata; 0 1 pt 01:00
+cron.schedule('22 21 * * *', () => { // 20:44 setata; 0 1 pt 01:00
     console.log('Running cron job to update reservations and payments...');
     updateReservationsAndPayments();
 }, {
     timezone: "Europe/Bucharest"
 });
 
+app.post('/createTestReservationIn2023', (req, res) => {
+    const { userId, locationId, hostId } = req.body;
+
+    if (!userId || !locationId || !hostId) {
+        console.error('Missing required fields:', { userId, locationId, hostId });
+        res.status(400).json({ error: 'Missing required fields' });
+        return;
+    }
+
+    const sql = `
+        INSERT INTO Rezervari (UtilizatorIdUtilizator, LocatiiIdLocatie2, UtilizatorIdUtilizator2, CheckInDate, CheckOutDate, Pret, Status, BookingTimestamp)
+        VALUES (?, ?, ?, '2023-01-01', '2023-01-01', 1, 'In asteptare', '2023-01-01 00:00:00')
+    `;
+    const params = [userId, locationId, hostId];
+
+    db.run(sql, params, function (err) {
+        if (err) {
+            console.error('Error creating reservation:', err.message);
+            res.status(500).json({ error: 'Internal Server Error' });
+            return;
+        }
+        console.log("Test reservation created with ID: ", this.lastID);
+        res.json({ id: this.lastID });
+    });
+});
+
 // Start the server
 const PORT = 4000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
+});
+
+// API endpoint to get payment status by RezervareIdRezervare
+app.get('/paymentStatus/:id', (req, res) => {
+    const id = req.params.id;
+    db.get(`SELECT Status FROM Plati WHERE RezervareIdRezervare = ?`, [id], (err, row) => {
+        if (err) {
+            res.status(500).send({ error: 'Error querying the database' });
+            return;
+        }
+        if (row) {
+            res.status(200).send({ id: id, status: row.Status });
+        } else {
+            res.status(404).send({ error: 'Payment not found' });
+        }
+    });
 });
