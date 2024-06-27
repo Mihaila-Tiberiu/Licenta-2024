@@ -76,7 +76,15 @@ export default function ReservationPage() {
     }, [selectedDates, locationInfo]);
 
     const isDateBooked = (date) => {
-        return bookedDates.some((booking) => isDateWithinRange(date, booking.startDate, booking.endDate));
+        return bookedDates.some((booking) => {
+            const dayBeforeStart = new Date(booking.startDate);
+            dayBeforeStart.setDate(dayBeforeStart.getDate() - 1);
+
+            const dayAfterEnd = new Date(booking.endDate);
+            dayAfterEnd.setDate(dayAfterEnd.getDate() + 1);
+
+            return isDateWithinRange(date, dayBeforeStart, dayAfterEnd);
+        });
     };
 
     const isDateWithinRange = (date, startDate, endDate) => {
@@ -84,13 +92,21 @@ export default function ReservationPage() {
     };
 
     const tileDisabled = ({ date, view }) => {
-        const currentDate = new Date();
-        const isPastDate = date < currentDate.setDate(currentDate.getDate() - 1);
-        const next7Days = new Date();
-        next7Days.setDate(currentDate.getDate() + 7);
-        const isNext7Days = date > currentDate && date <= next7Days;
-        const isBooked = isDateBooked(date);
-        return isPastDate || isNext7Days || isBooked;
+        if (view === 'month') {
+            // Disable past dates
+            const currentDate = new Date();
+            const isPastDate = date < currentDate;
+
+            // Disable today and the next 7 days
+            const next7Days = new Date();
+            next7Days.setDate(currentDate.getDate() + 7);
+            const isNext7Days = date > currentDate && date <= next7Days;
+
+            // Check if the date is booked
+            const isBooked = isDateBooked(date);
+
+            return isPastDate || isNext7Days || isBooked;
+        }
     };
 
     const handleDateChange = (dates) => {
@@ -132,50 +148,57 @@ export default function ReservationPage() {
             if (!userId) {
                 throw new Error('User not logged in');
             }
-
+    
             if (selectedDates.length !== 2) {
                 throw new Error('Please select both check-in and check-out dates');
             }
-
-            const [checkInDate, checkOutDate] = selectedDates;
-            const totalPrice = calculatePrice(checkInDate, checkOutDate);
-
+    
+            const [originalCheckInDate, checkOutDate] = selectedDates;
+            const totalPrice = calculatePrice(originalCheckInDate, checkOutDate);
+    
+            // Increment the check-in date by one day
+            let adjustedCheckInDate = new Date(originalCheckInDate);
+            adjustedCheckInDate.setDate(adjustedCheckInDate.getDate() + 1);
+    
+            // Format the dates
+            adjustedCheckInDate = adjustedCheckInDate.toISOString().split('T')[0];
+    
             console.log('Submitting reservation with data:', {
                 userId: userId,
                 locationId,
                 hostId: hostId,
-                checkInDate,
+                checkInDate: adjustedCheckInDate,
                 checkOutDate,
                 price: totalPrice,
             });
-
+    
             if (!hostId) {
                 throw new Error('Host ID is not set');
             }
-
+    
             const reservationResponse = await axios.post('/createReservation', {
                 userId: userId, // Ensure the user ID is included in the request body
                 locationId,
                 hostId: hostId,
-                checkInDate,
+                checkInDate: adjustedCheckInDate,
                 checkOutDate,
                 price: totalPrice,
             });
-
+    
             const reservationId = reservationResponse.data?.id;
             if (!reservationId) {
                 throw new Error('Invalid reservation response');
             }
-
+    
             console.log('Reservation ID:', reservationId);
-
+    
             await axios.post('/createPayment', {
                 reservationId,
                 cardNumber: cardNumber.replace(/\s/g, ''),
                 expDate,
                 cvc,
             });
-
+    
             alert('Reservation created successfully');
             navigate('/success');
         } catch (error) {
@@ -184,6 +207,7 @@ export default function ReservationPage() {
             navigate('/error');
         }
     };
+    
 
     const calculatePrice = (checkInDate, checkOutDate) => {
         if (!locationInfo) return 0;

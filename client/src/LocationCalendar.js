@@ -38,7 +38,15 @@ export default function LocationCalendar({ locationId }) {
     }, [locationId]);
 
     const isDateBooked = (date) => {
-        return bookedDates.some((booking) => isDateWithinRange(date, booking.startDate, booking.endDate));
+        return bookedDates.some((booking) => {
+            const dayBeforeStart = new Date(booking.startDate);
+            dayBeforeStart.setDate(dayBeforeStart.getDate() - 1);
+
+            const dayAfterEnd = new Date(booking.endDate);
+            dayAfterEnd.setDate(dayAfterEnd.getDate() + 1);
+
+            return isDateWithinRange(date, dayBeforeStart, dayAfterEnd);
+        });
     };
 
     const isDateWithinRange = (date, startDate, endDate) => {
@@ -46,20 +54,21 @@ export default function LocationCalendar({ locationId }) {
     };
 
     const tileDisabled = ({ date, view }) => {
-        // Disable past dates
-        const currentDate = new Date();
-        const isPastDate = date < currentDate;
+        if (view === 'month') {
+            // Disable past dates
+            const currentDate = new Date();
+            const isPastDate = date < currentDate;
 
-        // Disable today and the next 7 days
-        const next7Days = new Date();
-        next7Days.setDate(currentDate.getDate() + 7);
-        const isNext7Days = date > currentDate && date <= next7Days;
+            // Disable today and the next 7 days
+            const next7Days = new Date();
+            next7Days.setDate(currentDate.getDate() + 7);
+            const isNext7Days = date > currentDate && date <= next7Days;
 
-        // Check if the date is booked
-        const isBooked = isDateBooked(date);
+            // Check if the date is booked
+            const isBooked = isDateBooked(date);
 
-        // Disable if it's a past date, today, within the next 7 days, or if it's booked
-        return isPastDate || isNext7Days || isBooked;
+            return isPastDate || isNext7Days || isBooked;
+        }
     };
 
     return (

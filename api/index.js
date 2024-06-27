@@ -878,7 +878,7 @@ const cron = require('node-cron');
 const updateReservationsAndPayments = () => {
     const now = new Date();
     const twoDaysAgo = new Date(now);
-    twoDaysAgo.setHours(now.getHours() - 48);
+    twoDaysAgo.setHours(now.getHours() - 0);//48 in loc de 0
 
     const formattedTwoDaysAgo = twoDaysAgo.toISOString().slice(0, 19).replace('T', ' ');
 
@@ -912,7 +912,7 @@ const updateReservationsAndPayments = () => {
 };
 
 // Schedule the cron job to run at 1 AM every day
-cron.schedule('0 1 * * *', () => {
+cron.schedule('58 14 * * *', () => { // 14:57 setata; 0 1 pt 01:00
     console.log('Running cron job to update reservations and payments...');
     updateReservationsAndPayments();
 }, {
