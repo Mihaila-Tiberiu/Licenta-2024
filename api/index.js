@@ -469,7 +469,7 @@ app.delete('/deleteLocation/:locationId', (req, res) => {
 app.get('/getLocationReviews/:placeId', (req, res) => {
     const placeId = req.params.placeId;
 
-    db.all('SELECT * FROM Recenzii WHERE LocatieIdLocatie = ?', [placeId], (err, rows) => {
+    db.all('SELECT * FROM Recenzii WHERE LocatieIdLocatie = ? ORDER BY IdRecenzie DESC', [placeId], (err, rows) => {
         if (err) {
             console.error(err.message);
             res.status(500).json({ error: 'Internal Server Error' });
@@ -929,9 +929,66 @@ const updateReservationsAndPayments = () => {
     });
 };
 
+const updateReservationsAndPaymentsTest = () => {
+    const now = new Date();
+    const twoDaysAgo = new Date(now);
+    twoDaysAgo.setHours(now.getHours() - 0);  // Normally set to 48 hours ago
+
+    const formattedTwoDaysAgo = twoDaysAgo.toISOString().slice(0, 19).replace('T', ' '); //
+
+    const updateReservationsSql = `
+        UPDATE Rezervari
+        SET Status = 'Rezervata'
+        WHERE Status = 'In asteptare' AND BookingTimestamp <= ?
+    `;
+
+    const updatePaymentsSql = `
+        UPDATE Plati
+        SET Status = 'Fonduri transferate in conturile Occasionest (10%) si gazdei (90%)'
+        WHERE Status = 'In asteptare' AND RezervareIdRezervare IN (
+            SELECT IdRezervare FROM Rezervari WHERE Status = 'Rezervata'
+        )
+    `;
+
+    const updatePastReservationsSql = `
+        UPDATE Rezervari
+        SET Status = 'Completa'
+        WHERE Status = 'Rezervata' AND CheckoutDate <= ?
+    `;
+
+    // Update reservations to 'Rezervata'
+    db.run(updateReservationsSql, [formattedTwoDaysAgo], function (err) {
+        if (err) {
+            return console.error('Error updating reservations:', err.message);
+        }
+        console.log(`Updated ${this.changes} reservations to 'Rezervata'.`);
+
+        // Update payments for reservations now set to 'Rezervata'
+        db.run(updatePaymentsSql, function (err) {
+            if (err) {
+                return console.error('Error updating payments:', err.message);
+            }
+            console.log(`Updated ${this.changes} payments to 'Fonduri transferate in conturile Occasionest (10%) si gazdei (90%)'.`);
+
+            // Update reservations to 'Completa' where the checkout date is in the past
+            db.run(updatePastReservationsSql, [now.toISOString().slice(0, 19).replace('T', ' ')], function (err) {
+                if (err) {
+                    return console.error('Error updating past reservations:', err.message);
+                }
+                console.log(`Updated ${this.changes} past due reservations to 'Completa'.`);
+            });
+        });
+    });
+};
+
+app.get('/update-reservations-and-payments-test', (req, res) => {
+    updateReservationsAndPaymentsTest();
+    res.send('Reservation and payment update process initiated.');
+});
+
 
 // Schedule the cron job to run at 1 AM every day
-cron.schedule('22 21 * * *', () => { // 20:44 setata; 0 1 pt 01:00
+cron.schedule('0 1 * * *', () => { // 0 1 pt 01:00
     console.log('Running cron job to update reservations and payments...');
     updateReservationsAndPayments();
 }, {

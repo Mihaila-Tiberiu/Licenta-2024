@@ -43,7 +43,7 @@ export default function ContactUsPage() {
                     <div className="w-1/3 text-lg mt-10 text-left mx-auto">
                         Email: <a href="mailto:occasionest@dummy.com">occasionest@dummy.com</a>
                         <br />
-                        Telefon: <a href="tel:07XXXXXXXX">07XXXXXXXX</a>
+                        Telefon: <a href="tel:07XXXXXXXX">0712341234</a>
                         <br />
                         <br />
                         {/* Google Maps Location */}
