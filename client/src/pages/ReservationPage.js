@@ -184,8 +184,14 @@ export default function ReservationPage() {
                 throw new Error('Please select both check-in and check-out dates');
             }
 
-            if (cardNumber != "1111 1111 1111 1111") {
-                navigate('/error');
+            if (cardNumber !== "1111 1111 1111 1111") {
+                if (cardNumber === "2222 2222 2222 2222") {
+                    navigate('/error', { state: { tipEroare: "Fonduri insuficiente" } });
+                } else if (cardNumber === "3333 3333 3333 3333") {
+                    navigate('/error', { state: { tipEroare: "Card expirat" } });
+                } else {
+                    navigate('/error', { state: { tipEroare: "Eroare necunoscută" } });
+                }
             }
             else {
                 const [originalCheckInDate, checkOutDate] = selectedDates;
