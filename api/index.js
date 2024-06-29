@@ -25,7 +25,8 @@ app.use(express.static('images'));
 app.use('/images', express.static(__dirname+'/images'));
 
 app.use(cors({
-    origin: '*', // Allow all origins
+    credentials: true,
+    origin: "http://localhost:3000"
 }));
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
@@ -881,7 +882,7 @@ const updateReservationsAndPayments = () => {
     const twoDaysAgo = new Date(now);
     twoDaysAgo.setHours(now.getHours() - 48);  // Set to 48 hours ago
 
-    const formattedTwoDaysAgo = twoDaysAgo.toISOString().slice(0, 19).replace('T', ' ');
+    const formattedTwoDaysAgo = twoDaysAgo.toISOString().slice(0, 19).replace('T', ' '); //
 
     const updateReservationsSql = `
         UPDATE Rezervari
@@ -963,12 +964,6 @@ app.post('/createTestReservationIn2023', (req, res) => {
     });
 });
 
-// Start the server
-const PORT = 4000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
-
 // API endpoint to get payment status by RezervareIdRezervare
 app.get('/paymentStatus/:id', (req, res) => {
     const id = req.params.id;
@@ -983,4 +978,65 @@ app.get('/paymentStatus/:id', (req, res) => {
             res.status(404).send({ error: 'Payment not found' });
         }
     });
+});
+
+app.get('/api/total-price/:userId', (req, res) => {
+    const userId = req.params.userId;
+    const query = `
+        SELECT SUM(R.Pret) as total_price
+        FROM Rezervari R
+        JOIN Plati P ON R.IdRezervare = P.RezervareIdRezervare
+        WHERE R.UtilizatorIdUtilizator2 = ?
+          AND P.Status IN ("Fonduri extrase de OccasioNest", "Fonduri transferate in conturile Occasionest (10%) si gazdei (90%)")
+    `;
+
+    db.get(query, [userId], (err, row) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        res.json({ totalPrice: row.total_price || 0 });
+    });
+});
+
+// New endpoint to update payment statuses by hosts extraction
+app.post('/api/update-statuses/:userId', (req, res) => {
+    const userId = req.params.userId;
+    const updateQuery = `
+        UPDATE Plati
+        SET Status = CASE
+            WHEN Status = "Fonduri extrase de OccasioNest" THEN "Fonduri extrase de Occasionest si de Gazda"
+            WHEN Status = "Fonduri transferate in conturile Occasionest (10%) si gazdei (90%)" THEN "Fonduri extrase de Gazda"
+        END
+        WHERE RezervareIdRezervare IN (
+            SELECT IdRezervare
+            FROM Rezervari
+            WHERE UtilizatorIdUtilizator2 = ?
+        )
+        AND Status IN ("Fonduri extrase de OccasioNest", "Fonduri transferate in conturile Occasionest (10%) si gazdei (90%)")
+    `;
+
+    db.run(updateQuery, [userId], function(err) {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        res.json({ message: 'Statuses updated successfully', changes: this.changes });
+    });
+});
+
+// New endpoint to fetch user info
+app.get('/api/user-info/:userId', (req, res) => {
+    const userId = req.params.userId;
+    const query = `SELECT * FROM Utilizatori WHERE IdUtilizator = ?`;
+
+    db.get(query, [userId], (err, row) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        res.json(row);
+    });
+});
+
+// Start the server
+app.listen(4000, () => {
+    console.log(`Server is running on port 4000`);
 });

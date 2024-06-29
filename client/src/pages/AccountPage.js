@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { UserContext } from "../UserContext";
 import { Navigate, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
@@ -6,19 +6,59 @@ import axios from "axios";
 import PlacesPage from "./PlacesPage";
 import MyBookingsPage from "./MyBookingsPage";
 import MyLocationsBookingsPage from "./MyLocationsBookingsPage";
+import Alert from "../Alert";
 
 export default function AccountPage() {
     const[redirect, setRedirect] = useState(false);
+    const [totalPrice, setTotalPrice] = useState(0);
+    const [phone, setPhone] = useState("");
     const {ready, user, setUser} = useContext(UserContext);
     let {subpage} = useParams();
     if (subpage === undefined) {
         subpage = 'profile';
     }
 
+    useEffect(() => {
+        if (user) {
+            axios.get(`/api/total-price/${user.IdUtilizator}`)
+                .then(response => {
+                    const price = response.data.totalPrice * 0.9;
+                    const roundedPrice = Math.floor(price * 100) / 100;
+                    setTotalPrice(roundedPrice);
+                    })
+                .catch(error => {
+                    console.error("There was an error fetching the total price!", error);
+                });
+            axios.get(`/api/user-info/${user.IdUtilizator}`)
+            .then(response => {
+                setPhone(response.data.Phone);
+                console.log('Phone received:', response.data.Phone); 
+            })
+            .catch(error => {
+                console.error("There was an error fetching the user info!", error);
+                });
+        }
+    }, [user]);
+
     async function logout(){
         await axios.post('/logout');
         setRedirect('/');
         setUser(null);
+    }
+
+    async function updateStatuses() {
+        if (user) {
+            try {
+                const response = await axios.post(`/api/update-statuses/${user.IdUtilizator}`);
+                Alert.showAlert('Fonduri extrase cu succes!');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            } catch (error) {
+                console.error("There was an error updating the statuses!", error);
+                Alert.showAlert('A aparut o eroare la extragerea fondurilor!');
+            }
+        }
     }
 
     if (!ready){
@@ -74,7 +114,18 @@ export default function AccountPage() {
             <div className="relative">
             {subpage === 'profile' && (
                 <div className="text-center mb-40">
-                    Autentificat ca {user.Username} ({user.Email}) <br/>
+                    Autentificat ca {user.Username} ({user.Email}) <br />
+                    {phone && (
+                        <div>
+                            Telefon: {phone} <br />
+                        </div>
+                    )}
+                    {totalPrice > 0 && (
+                        <div>
+                            Total Pret: {totalPrice} RON <br />
+                            <button onClick={updateStatuses} className="py-2 px-6 mt-2 bg-blue-700 text-white rounded hover:bg-blue-900">Extrage fondurile!</button>
+                        </div>
+                    )}
                     <button onClick={logout} className="py-2 px-6 mt-2 bg-primary text-white rounded hover:bg-green-900">Ieși din cont</button>
                 </div>
             )}

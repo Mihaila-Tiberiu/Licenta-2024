@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import ImageCarousel from '../ImageCarousel';
 import React from "react";
 import LocationCalendar from '../LocationCalendar';
+import Alert from "../Alert";
 
 
 export default function LocationListing() {
@@ -63,11 +64,17 @@ export default function LocationListing() {
     }, [locationId, userId]);
 
     const handleOnClick = () => {
+        if (!userId) {
+            Alert.showAlert("Trebuie să fiți autentificat pentru a face o rezervare!");
+            return;
+        }
+    
         console.log('Location Info:', locationInfo);
         console.log('Location Images Array:', locationImagesArray);
         console.log('Location Reviews Array:', locationReviewsArray);
         console.log('UserId:', userId);
         console.log(bookingCount, reviewCount, comment, rating);
+    
         window.location.href = `/reservation?locationId=${locationId}`;
     };
 
