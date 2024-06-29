@@ -51,9 +51,7 @@ export default function AccountPage() {
             try {
                 const response = await axios.post(`/api/update-statuses/${user.IdUtilizator}`);
                 Alert.showAlert('Fonduri extrase cu succes!');
-                setTimeout(() => {
-                    window.location.reload();
-                }, 2000);
+                setTotalPrice(0);
             } catch (error) {
                 console.error("There was an error updating the statuses!", error);
                 Alert.showAlert('A aparut o eroare la extragerea fondurilor!');
@@ -120,12 +118,14 @@ export default function AccountPage() {
                             Telefon: {phone} <br />
                         </div>
                     )}
-                    {totalPrice > 0 && (
+
                         <div>
-                            Total Pret: {totalPrice} RON <br />
+                            Fonduri obținute ca gazdă în cont: {totalPrice} RON <br />
+                            {totalPrice > 0 && (
                             <button onClick={updateStatuses} className="py-2 px-6 mt-2 bg-blue-700 text-white rounded hover:bg-blue-900">Extrage fondurile!</button>
+                            )}
                         </div>
-                    )}
+
                     <button onClick={logout} className="py-2 px-6 mt-2 bg-primary text-white rounded hover:bg-green-900">Ieși din cont</button>
                 </div>
             )}

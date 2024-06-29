@@ -998,6 +998,23 @@ app.get('/api/total-price/:userId', (req, res) => {
     });
 });
 
+app.get('/api/total-price-admin', (req, res) => {
+    const userId = req.params.userId;
+    const query = `
+        SELECT SUM(R.Pret) as total_price
+        FROM Rezervari R
+        JOIN Plati P ON R.IdRezervare = P.RezervareIdRezervare
+        WHERE P.Status IN ("Fonduri extrase de Gazda", "Fonduri transferate in conturile Occasionest (10%) si gazdei (90%)")
+    `;
+
+    db.get(query, [userId], (err, row) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        res.json({ totalPrice: row.total_price || 0 });
+    });
+});
+
 // New endpoint to update payment statuses by hosts extraction
 app.post('/api/update-statuses/:userId', (req, res) => {
     const userId = req.params.userId;
@@ -1023,6 +1040,26 @@ app.post('/api/update-statuses/:userId', (req, res) => {
     });
 });
 
+// New endpoint to update payment statuses by OccasioNest extraction
+app.post('/api/update-statuses-admin', (req, res) => {
+    const userId = req.params.userId;
+    const updateQuery = `
+        UPDATE Plati
+        SET Status = CASE
+            WHEN Status = "Fonduri extrase de Gazda" THEN "Fonduri extrase de Occasionest si de Gazda"
+            WHEN Status = "Fonduri transferate in conturile Occasionest (10%) si gazdei (90%)" THEN "Fonduri extrase de OccasioNest"
+        END
+        WHERE Status IN ("Fonduri extrase de Gazda", "Fonduri transferate in conturile Occasionest (10%) si gazdei (90%)")
+    `;
+
+    db.run(updateQuery, [userId], function(err) {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        res.json({ message: 'Statuses updated successfully', changes: this.changes });
+    });
+});
+
 // New endpoint to fetch user info
 app.get('/api/user-info/:userId', (req, res) => {
     const userId = req.params.userId;
@@ -1035,6 +1072,54 @@ app.get('/api/user-info/:userId', (req, res) => {
         res.json(row);
     });
 });
+
+// Function to get payment stats
+const getPaymentStats = () => {
+    return new Promise((resolve, reject) => {
+      const query = "SELECT Status, COUNT(*) AS count FROM Plati GROUP BY Status";
+      db.all(query, [], (err, rows) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(rows);
+      });
+    });
+  };
+  
+  // Function to get reservation stats
+  const getReservationStats = () => {
+    return new Promise((resolve, reject) => {
+      const query = "SELECT Status, COUNT(*) AS count FROM Rezervari GROUP BY Status";
+      db.all(query, [], (err, rows) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(rows);
+      });
+    });
+  };
+  
+  // Payment stats endpoint
+  app.get('/api/payments/stats', async (req, res) => {
+    try {
+      const stats = await getPaymentStats();
+      res.json(stats);
+    } catch (error) {
+      console.error('Failed to retrieve payment stats:', error);
+      res.status(500).send('Error fetching payment stats');
+    }
+  });
+  
+  // Reservation stats endpoint
+  app.get('/api/reservations/stats', async (req, res) => {
+    try {
+      const stats = await getReservationStats();
+      res.json(stats);
+    } catch (error) {
+      console.error('Failed to retrieve reservation stats:', error);
+      res.status(500).send('Error fetching reservation stats');
+    }
+  });
 
 // Start the server
 app.listen(4000, () => {

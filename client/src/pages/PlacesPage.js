@@ -250,7 +250,7 @@ export default function PlacesPage(){
                                             <p>{location.Oras}, {location.Judet}</p>
                                             <p>{location.Rating !== 0 ? location.Rating + '⭐' : 'Nu exista recenzii'}</p>
                                             <p>Cap. {location.Capacitate} persoane</p>
-                                            <p>Preț pe zi: {location.PretPeZi}</p>
+                                            <p>Preț pe zi: {location.PretPeZi} RON</p>
                                             <p>Facilități: {location.Facilitati}</p>
                                             
                                         </div>

@@ -72,7 +72,7 @@ export default function MyBookingsPage() {
                             <h2 className="text-xl font-bold">{locationDetails[booking.LocatiiIdLocatie2]?.Nume}</h2>
                             <p>{locationDetails[booking.LocatiiIdLocatie2]?.Oras}, {locationDetails[booking.LocatiiIdLocatie2]?.Judet}</p>
                             <p>Date rezervate: {booking.CheckInDate} - {booking.CheckOutDate}</p>
-                            <p>Pret total: {booking.Pret}</p>
+                            <p>Pret total: {booking.Pret} RON</p>
                             <p>Data și ora rezervării: {booking.BookingTimestamp}</p>
                             <p>Status: {booking.Status}</p>
                         </div>

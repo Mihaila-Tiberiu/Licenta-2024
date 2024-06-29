@@ -14,6 +14,7 @@ import AboutUsPage from './pages/AboutUsPage';
 import ReservationPage from './pages/ReservationPage.js';
 import SuccessPage from './pages/SuccessPage.js';
 import ErrorPage from './pages/ErrorPage.js';
+import Dashboard from './pages/Dashboard.js';
 
 axios.defaults.baseURL = 'http://localhost:4000';
 axios.defaults.withCredentials = true;
@@ -35,6 +36,7 @@ function App() {
           <Route path="/reservation" element={<ReservationPage/>} />
           <Route path="/success" element={<SuccessPage/>} />
           <Route path="/error" element={<ErrorPage/>} />
+          <Route path="/admin" element={<Dashboard/>} />
         </Route>
       </Routes>
     </UserContextProvider>
