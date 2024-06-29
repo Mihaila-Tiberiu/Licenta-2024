@@ -183,60 +183,65 @@ export default function ReservationPage() {
             if (selectedDates.length !== 2) {
                 throw new Error('Please select both check-in and check-out dates');
             }
-    
-            const [originalCheckInDate, checkOutDate] = selectedDates;
-            const totalPrice = calculatePrice(originalCheckInDate, checkOutDate);
-    
-            // Increment the check-in date by one day
-            let adjustedCheckInDate = new Date(originalCheckInDate);
-            adjustedCheckInDate.setDate(adjustedCheckInDate.getDate() + 1);
-    
-            // Format the dates
-            adjustedCheckInDate = adjustedCheckInDate.toISOString().split('T')[0];
-    
-            console.log('Submitting reservation with data:', {
-                userId: userId,
-                locationId,
-                hostId: hostId,
-                checkInDate: adjustedCheckInDate,
-                checkOutDate,
-                price: totalPrice,
-            });
-    
-            if (!hostId) {
-                throw new Error('Host ID is not set');
+
+            if (cardNumber != "1111 1111 1111 1111") {
+                navigate('/error');
             }
-    
-            const reservationResponse = await axios.post('/createReservation', {
-                userId: userId, // Ensure the user ID is included in the request body
-                locationId,
-                hostId: hostId,
-                checkInDate: adjustedCheckInDate,
-                checkOutDate,
-                price: totalPrice,
-            });
-    
-            const reservationId = reservationResponse.data?.id;
-            if (!reservationId) {
-                throw new Error('Invalid reservation response');
+            else {
+                const [originalCheckInDate, checkOutDate] = selectedDates;
+                const totalPrice = calculatePrice(originalCheckInDate, checkOutDate);
+        
+                // Increment the check-in date by one day
+                let adjustedCheckInDate = new Date(originalCheckInDate);
+                adjustedCheckInDate.setDate(adjustedCheckInDate.getDate() + 1);
+        
+                // Format the dates
+                adjustedCheckInDate = adjustedCheckInDate.toISOString().split('T')[0];
+        
+                console.log('Submitting reservation with data:', {
+                    userId: userId,
+                    locationId,
+                    hostId: hostId,
+                    checkInDate: adjustedCheckInDate,
+                    checkOutDate,
+                    price: totalPrice,
+                });
+        
+                if (!hostId) {
+                    throw new Error('Host ID is not set');
+                }
+        
+                const reservationResponse = await axios.post('/createReservation', {
+                    userId: userId, // Ensure the user ID is included in the request body
+                    locationId,
+                    hostId: hostId,
+                    checkInDate: adjustedCheckInDate,
+                    checkOutDate,
+                    price: totalPrice,
+                });
+        
+                const reservationId = reservationResponse.data?.id;
+                if (!reservationId) {
+                    throw new Error('Invalid reservation response');
+                }
+        
+                console.log('Reservation ID:', reservationId);
+        
+                await axios.post('/createPayment', {
+                    reservationId,
+                    cardNumber: cardNumber.replace(/\s/g, ''),
+                    expDate,
+                    cvc,
+                });
+        
+                navigate('/success');
             }
-    
-            console.log('Reservation ID:', reservationId);
-    
-            await axios.post('/createPayment', {
-                reservationId,
-                cardNumber: cardNumber.replace(/\s/g, ''),
-                expDate,
-                cvc,
-            });
-    
-            Alert.showAlert('Rezervare creată cu succes!');
-            navigate('/success');
         } catch (error) {
             console.error('Error creating reservation:', error);
             console.log(error.response?.data); // Log the error response from the server
             navigate('/error');
         }
+        
     };
     
 
