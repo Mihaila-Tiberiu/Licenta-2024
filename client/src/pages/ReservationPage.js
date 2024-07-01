@@ -5,6 +5,8 @@ import 'react-calendar/dist/Calendar.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { UserContext } from '../UserContext';
 import Alert from '../Alert';
+import {SERVICE_ID_EMAILJS, PUBLIC_KEY_EMAILJS, TEMPLATE_ID_EMAILJS_ALL} from '../config.js';
+import emailjs from '@emailjs/browser';
 
 export default function ReservationPage() {
     const { user, ready } = useContext(UserContext);
@@ -174,6 +176,53 @@ export default function ReservationPage() {
         setCvc(value.slice(0, 3));
     };
 
+    const sendReservationEmails = async (guestId, hostId, locationId, adjustedCheckInDate, checkOutDate) => {
+        try {
+            // Fetch guest info
+            const guestResponse = await axios.get(`/api/user-info/${guestId}`);
+            const guestInfo = guestResponse.data;
+    
+            // Fetch host info
+            const hostResponse = await axios.get(`/api/user-info/${hostId}`);
+            const hostInfo = hostResponse.data;
+    
+            // Fetch location info
+            const locationResponse = await axios.get(`/api/LocationInfo/${locationId}`);
+            const locationInfo = locationResponse.data.locations[0];
+    
+            // Calculate amenajare (preparation) and curatenie (cleaning) days
+            const dayBeforeCheckIn = new Date(adjustedCheckInDate);
+            dayBeforeCheckIn.setDate(dayBeforeCheckIn.getDate() - 1);
+    
+            const dayAfterCheckOut = new Date(checkOutDate);
+            dayAfterCheckOut.setDate(dayAfterCheckOut.getDate() + 1);
+    
+            const formattedDayBeforeCheckIn = dayBeforeCheckIn.toISOString().split('T')[0];
+            const formattedDayAfterCheckOut = dayAfterCheckOut.toISOString().split('T')[0];
+    
+            // Prepare email data
+            const emailHostData = {
+                to_email: hostInfo.Email,
+                subiect: 'Aveti o noua rezervare la locatia dvs.',
+                mesaj: `Locatia dvs ${locationInfo.Nume} are o noua rezervare de pe ${adjustedCheckInDate} pana pe ${checkOutDate}. Aveti ziua de ${formattedDayBeforeCheckIn} pentru amenajare si ziua de ${formattedDayAfterCheckOut} pentru curatenie. Informatiile de contact ale clientului: Email: ${guestInfo.Email}, Telefon: ${guestInfo.Phone}. Aveti 48 ore pentru a anula rezervarea daca doriti acest lucru. `,
+            };
+    
+            const emailGuestData = {
+                to_email: guestInfo.Email,
+                subiect: 'Rezervarea dvs a fost realizata cu succes',
+                mesaj: `Rezervarea dvs la ${locationInfo.Nume} de pe ${adjustedCheckInDate} pana pe ${checkOutDate} a fost confirmata. Informatiile de contact ale gazdei: Email: ${hostInfo.Email}, Telefon: ${hostInfo.Phone}. Aveti 48 ore pentru a anula rezervarea daca doriti acest lucru.`,
+            };
+    
+            // Send emails
+            await emailjs.send(SERVICE_ID_EMAILJS, TEMPLATE_ID_EMAILJS_ALL, emailHostData, PUBLIC_KEY_EMAILJS);
+            await emailjs.send(SERVICE_ID_EMAILJS, TEMPLATE_ID_EMAILJS_ALL, emailGuestData, PUBLIC_KEY_EMAILJS);
+    
+            console.log('Emails sent successfully');
+        } catch (error) {
+            console.error('Error sending reservation emails:', error);
+        }
+    };
+
     const handleReservationSubmit = async () => {
         try {
             if (!userId) {
@@ -239,6 +288,8 @@ export default function ReservationPage() {
                     expDate,
                     cvc,
                 });
+
+                await sendReservationEmails(userId, hostId, locationId, adjustedCheckInDate, checkOutDate);
         
                 navigate('/success');
             }
