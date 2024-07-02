@@ -1178,6 +1178,28 @@ const getPaymentStats = () => {
     }
   });
 
+  app.get('/api/checkReservations/:location_id', (req, res) => {
+    const locationId = req.params.location_id;
+
+    const sql = `
+        SELECT Status FROM Rezervari 
+        WHERE LocatiiIdLocatie2 = ?
+    `;
+
+    db.all(sql, [locationId], (err, rows) => {
+        if (err) {
+            console.error('Error executing SQL', err);
+            res.status(500).send('Internal Server Error');
+            return;
+        }
+
+        const canDelete = rows.every(row => row.Status !== 'Rezervata' && row.Status !== 'In asteptare');
+        res.json({ canDelete });
+    });
+});
+
+  
+
 // Start the server
 app.listen(4000, () => {
     console.log(`Server is running on port 4000`);

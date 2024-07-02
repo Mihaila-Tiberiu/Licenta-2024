@@ -90,6 +90,20 @@ export default function PlacesPage(){
 
     }, [action]);
 
+    const [canDelete, setCanDelete] = useState({});
+
+    useEffect(() => {
+        const checkReservations = async () => {
+            const resPromises = locations.map(async (location) => {
+                const response = await axios.get(`/api/checkReservations/${location.IdLocatie}`);
+                return { id: location.IdLocatie, canDelete: response.data.canDelete };
+            });
+            const results = await Promise.all(resPromises);
+            setCanDelete(results.reduce((acc, curr) => ({ ...acc, [curr.id]: curr.canDelete }), {}));
+        };
+        checkReservations();
+    }, [locations]);
+
     function uploadPhoto(ev) {
         console.log(addedPhotos);//
         const files = ev.target.files;
@@ -255,6 +269,7 @@ export default function PlacesPage(){
                                             
                                         </div>
                                     </div>
+                                    {canDelete[location.IdLocatie] && (
                                     <button className="absolute top-2 right-2 bg-transparent border-none">
                                         <div title="Șterge locația">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-10 h-10 cursor-pointer bg-gray-200 rounded p-1 tooltip hover:text-white hover:bg-red-700" onClick={() => handleDeleteLocation(location.IdLocatie)} title="Delete photo">
@@ -262,6 +277,7 @@ export default function PlacesPage(){
                                             </svg>
                                         </div>
                                     </button>
+                                    )}
                                 </Link>
                                 
                             </div> 
