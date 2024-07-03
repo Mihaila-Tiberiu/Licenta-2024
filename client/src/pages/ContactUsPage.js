@@ -105,6 +105,7 @@ export default function ContactUsPage() {
                                 name="phone"
                                 className="mt-1 p-2 border border-gray-300 rounded-md w-full"
                                 placeholder="Introduceți numărul de telefon"
+                                required
                             />
                         </div>
                         <div className='mb-4'>

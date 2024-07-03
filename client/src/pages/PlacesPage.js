@@ -290,9 +290,9 @@ export default function PlacesPage(){
                 <div className="w-3/4 flex justify-center mx-auto">
                 <form onSubmit={addNewPlace}>
                     <h2 className="text-xl mt-4 ">Denumirea locației</h2>
-                    <input type="text" value={denumire} onChange={ev=>setDenumire(ev.target.value)} placeholder="Grădină luminoasă spectaculoasă"/>
+                    <input required type="text" value={denumire} onChange={ev=>setDenumire(ev.target.value)} placeholder="Grădină luminoasă spectaculoasă"/>
                     <h2 className="text-xl mt-4 ">Descrierea locației</h2>
-                    <textarea value={descriere} onChange={ev=>setDescriere(ev.target.value)} className="w-full border my-1 py-2 px-3 rounded-2xl" placeholder="Situată la câțiva pași de plajă, această grădină..."/>
+                    <textarea required value={descriere} onChange={ev=>setDescriere(ev.target.value)} className="w-full border my-1 py-2 px-3 rounded-2xl" placeholder="Situată la câțiva pași de plajă, această grădină..."/>
                     <div>
                         <h2 className="text-xl mt-4 ">Județul locației</h2>
                         <StateSelect
@@ -315,11 +315,11 @@ export default function PlacesPage(){
                         />
                     </div>
                     <h2 className="text-xl mt-4 ">Stradă, număr, alte detalii etc.</h2>
-                    <input type="text" value={alte} onChange={ev=>setAlte(ev.target.value)} placeholder="Bd. Republicii, Nr 109 (vis-a-vis de florăria Floriana)"/>
+                    <input required type="text" value={alte} onChange={ev=>setAlte(ev.target.value)} placeholder="Bd. Republicii, Nr 109 (vis-a-vis de florăria Floriana)"/>
                     <h2 className="text-xl mt-4 ">Capacitate</h2>
-                    <input type="number" value={capacitate} onChange={ev=>setCapacitate(ev.target.value)} placeholder="Numărul maxim de persoane"/>
+                    <input required type="number" value={capacitate} onChange={ev=>setCapacitate(ev.target.value)} placeholder="Numărul maxim de persoane"/>
                     <h2 className="text-xl mt-4 ">Prețul pe zi</h2>
-                    <input type="text" value={ppzi} onChange={ev=>setPpzi(ev.target.value)} placeholder="Exprimat în RON"/>
+                    <input required type="text" value={ppzi} onChange={ev=>setPpzi(ev.target.value)} placeholder="Exprimat în RON"/>
                     
                     <h2 className="text-xl mt-4 ">Fotografii</h2>
                     <div className="mt-2 flex flex-wrap gap-3 justify-center">
@@ -372,11 +372,11 @@ export default function PlacesPage(){
                     <div className="grid gap-2 sm:grid-cols-3">
                         <div>
                             <h3 className="mt-4  -mb-1">Oră check-in</h3>
-                            <input type="text" value={checkIn} onChange={ev=>setCheckIn(ev.target.value)} placeholder="08:00" />
+                            <input required type="text" value={checkIn} onChange={ev=>setCheckIn(ev.target.value)} placeholder="08:00" />
                         </div>
                         <div>
                             <h3 className="mt-4  -mb-1">Oră check-out</h3>
-                            <input type="text" value={checkOut} onChange={ev=>setCheckOut(ev.target.value)} placeholder="10:00" />
+                            <input required type="text" value={checkOut} onChange={ev=>setCheckOut(ev.target.value)} placeholder="10:00" />
                         </div>
                     </div>
                     <div>
@@ -389,9 +389,9 @@ export default function PlacesPage(){
                 <div className="w-3/4 flex justify-center mx-auto">
                 <form onSubmit={editPlace}>
                     <h2 className="text-xl mt-4 ">Denumirea locației</h2>
-                    <input type="text" value={denumire} onChange={ev=>setDenumire(ev.target.value)} placeholder="Grădină luminoasă spectaculoasă"/>
+                    <input required type="text" value={denumire} onChange={ev=>setDenumire(ev.target.value)} placeholder="Grădină luminoasă spectaculoasă"/>
                     <h2 className="text-xl mt-4 ">Descrierea locației</h2>
-                    <textarea value={descriere} onChange={ev=>setDescriere(ev.target.value)} className="w-full border my-1 py-2 px-3 rounded-2xl" placeholder="Situată la câțiva pași de plajă, această grădină..."/>
+                    <textarea required value={descriere} onChange={ev=>setDescriere(ev.target.value)} className="w-full border my-1 py-2 px-3 rounded-2xl" placeholder="Situată la câțiva pași de plajă, această grădină..."/>
                     <div>
                         <h2 className="text-xl mt-4 ">Județul locației</h2>
                         <StateSelect
@@ -414,11 +414,11 @@ export default function PlacesPage(){
                         />
                     </div>
                     <h2 className="text-xl mt-4 ">Stradă, număr, alte detalii etc.</h2>
-                    <input type="text" value={alte} onChange={ev=>setAlte(ev.target.value)} placeholder="Bd. Republicii, Nr 109 (vis-a-vis de florăria Floriana)"/>
+                    <input required type="text" value={alte} onChange={ev=>setAlte(ev.target.value)} placeholder="Bd. Republicii, Nr 109 (vis-a-vis de florăria Floriana)"/>
                     <h2 className="text-xl mt-4 ">Capacitate</h2>
-                    <input type="number" value={capacitate} onChange={ev=>setCapacitate(ev.target.value)} placeholder="Numărul maxim de persoane"/>
+                    <input required type="number" value={capacitate} onChange={ev=>setCapacitate(ev.target.value)} placeholder="Numărul maxim de persoane"/>
                     <h2 className="text-xl mt-4 ">Prețul pe zi</h2>
-                    <input type="text" value={ppzi} onChange={ev=>setPpzi(ev.target.value)} placeholder="Exprimat în RON"/>
+                    <input required type="text" value={ppzi} onChange={ev=>setPpzi(ev.target.value)} placeholder="Exprimat în RON"/>
                     
                     <h2 className="text-xl mt-4 ">Fotografii</h2>
                     <div className="mt-2 flex flex-wrap gap-3 justify-center">
@@ -471,11 +471,11 @@ export default function PlacesPage(){
                     <div className="grid gap-2 sm:grid-cols-3">
                         <div>
                             <h3 className="mt-4  -mb-1">Oră check-in</h3>
-                            <input type="text" value={checkIn} onChange={ev=>setCheckIn(ev.target.value)} placeholder="08:00" />
+                            <input required type="text" value={checkIn} onChange={ev=>setCheckIn(ev.target.value)} placeholder="08:00" />
                         </div>
                         <div>
                             <h3 className="mt-4  -mb-1">Oră check-out</h3>
-                            <input type="text" value={checkOut} onChange={ev=>setCheckOut(ev.target.value)} placeholder="10:00" />
+                            <input required type="text" value={checkOut} onChange={ev=>setCheckOut(ev.target.value)} placeholder="10:00" />
                         </div>
                     </div>
                     <div>

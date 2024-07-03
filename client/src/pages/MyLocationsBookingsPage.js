@@ -4,6 +4,8 @@ import axios from 'axios';
 import { UserContext } from '../UserContext';
 import Alert from '../Alert';
 import { useNavigate, Navigate } from "react-router-dom";
+import {SERVICE_ID_EMAILJS, PUBLIC_KEY_EMAILJS, TEMPLATE_ID_EMAILJS_ALL} from '../config.js';
+import emailjs from '@emailjs/browser';
 
 export default function MyBookingsPage() {
 
@@ -42,10 +44,21 @@ export default function MyBookingsPage() {
     async function handleDeleteBooking(IdRezervare) {
         try {
             await axios.put(`/cancelBookingByHost/${IdRezervare}`);
-            Alert.showAlert('Rezervarea a fost anulată');
+
+            const userEmailResponse = await axios.get(`/getGuestEmailByBookingId/${IdRezervare}`);
+            const bookingDetailsResponse = await axios.get(`/getBookingDetails/${IdRezervare}`);
+    
+            const emailParams = {
+                subiect: 'Rezervare anulată de către gazdă',
+                mesaj: `Rezervarea cu data de check-in ${bookingDetailsResponse.data.CheckInDate} și data de check-out ${bookingDetailsResponse.data.CheckOutDate} a fost anulată de către gazdă.`,
+                to_email: userEmailResponse.data.email
+            };
+    
+            await emailjs.send(SERVICE_ID_EMAILJS, TEMPLATE_ID_EMAILJS_ALL, emailParams, PUBLIC_KEY_EMAILJS);
+            Alert.showAlert('Rezervarea a fost anulată și oaspetele a fost notificat.');
         } catch (error) {
-            console.error('Nu a putut fi stearsa rezervarea:', error);
-            console.log(IdRezervare);
+            console.error('Failed to delete booking or send email:', error);
+            Alert.showAlert('Eroare la anularea rezervării.');
         }
     };
 

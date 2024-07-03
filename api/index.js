@@ -1198,7 +1198,51 @@ const getPaymentStats = () => {
     });
 });
 
-  
+app.get('/getHostEmailByBookingId/:IdRezervare', (req, res) => {
+    const { IdRezervare } = req.params;
+    db.get(`SELECT u.Email FROM Utilizatori u JOIN Rezervari r ON u.IdUtilizator = r.UtilizatorIdUtilizator2 WHERE r.IdRezervare = ?`, [IdRezervare], (error, row) => {
+        if (error) {
+            console.error('Error fetching email:', error);
+            return res.status(500).send('Server error');
+        }
+        if (row) {
+            res.json({ email: row.Email });
+        } else {
+            res.status(404).send('Email not found');
+        }
+    });
+});
+
+app.get('/getGuestEmailByBookingId/:IdRezervare', (req, res) => {
+    const { IdRezervare } = req.params;
+    db.get(`SELECT u.Email FROM Utilizatori u JOIN Rezervari r ON u.IdUtilizator = r.UtilizatorIdUtilizator WHERE r.IdRezervare = ?`, [IdRezervare], (error, row) => {
+        if (error) {
+            console.error('Error fetching email:', error);
+            return res.status(500).send('Server error');
+        }
+        if (row) {
+            res.json({ email: row.Email });
+        } else {
+            res.status(404).send('Email not found');
+        }
+    });
+});
+
+app.get('/getBookingDetails/:IdRezervare', (req, res) => {
+    const { IdRezervare } = req.params;
+    db.get("SELECT * FROM Rezervari WHERE IdRezervare = ?", [IdRezervare], (error, row) => {
+        if (error) {
+            console.error('Error fetching booking details:', error);
+            return res.status(500).send('Server error');
+        }
+        if (row) {
+            res.json(row);
+        } else {
+            res.status(404).send('Booking not found');
+        }
+    });
+});
+
 
 // Start the server
 app.listen(4000, () => {
