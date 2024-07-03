@@ -72,7 +72,7 @@ export default function ReservationPage() {
         if (selectedDates.length === 2 && locationInfo) {
             const [checkInDate, checkOutDate] = selectedDates;
             const days = (new Date(checkOutDate) - new Date(checkInDate)) / (1000 * 60 * 60 * 24);
-            setPrice((locationInfo.PretPeZi * days).toFixed(2));
+            setPrice((locationInfo.PretPeZi * (days-1)).toFixed(2));
         } else {
             setPrice(0);
         }
@@ -305,7 +305,7 @@ export default function ReservationPage() {
     const calculatePrice = (checkInDate, checkOutDate) => {
         if (!locationInfo) return 0;
         const days = (new Date(checkOutDate) - new Date(checkInDate)) / (1000 * 60 * 60 * 24);
-        return (locationInfo.PretPeZi * days).toFixed(2);
+        return (locationInfo.PretPeZi * (days-1)).toFixed(2);
     };
 
     const isFormValid = () => {

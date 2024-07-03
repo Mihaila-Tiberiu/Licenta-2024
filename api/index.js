@@ -1243,6 +1243,21 @@ app.get('/getBookingDetails/:IdRezervare', (req, res) => {
     });
 });
 
+app.get('/IdFromUsername/:Username', (req, res) => {
+    const {Username} = req.params;
+    db.get('SELECT IdUtilizator FROM Utilizatori WHERE Username = ?', [Username], (err, row) => {
+        if (err) {
+            console.error(err.message);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            if (row) {
+                res.json(row);
+            } else {
+                res.status(404).json({ error: 'Username not found' });
+            }
+        }
+    });
+});
 
 // Start the server
 app.listen(4000, () => {
