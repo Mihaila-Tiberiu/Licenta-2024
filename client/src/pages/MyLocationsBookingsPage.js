@@ -23,7 +23,7 @@ export default function MyBookingsPage() {
             const response2 = await axios.get(`/getAllUserBookings48HoursHOST/${user.IdUtilizator}`);
             setNext48hrsUserBookings(response2.data);
             
-            // Fetch location details for each booking
+            
             const locationsPromises = response.data.map(booking => 
                 axios.get(`/api/LocationInfo/${booking.LocatiiIdLocatie2}`)
             );
@@ -62,11 +62,11 @@ export default function MyBookingsPage() {
         }
     };
 
-    const navigate = useNavigate(); // Initialize useNavigate hook
+    const navigate = useNavigate();
 
-    // Define handleRedirect function
+    
     const handleRedirect = (url) => {
-        navigate(url); // Navigate to the specified URL
+        navigate(url);
     };
 
    return (

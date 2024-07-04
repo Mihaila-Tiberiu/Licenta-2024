@@ -33,13 +33,13 @@ export default function ReservationPage() {
 
                     const startDate = new Date(
                         checkInParts[0], // Year
-                        checkInParts[1] - 1, // Month (zero-indexed)
+                        checkInParts[1] - 1, // Month (zero-index)
                         checkInParts[2] // Day
                     );
 
                     const endDate = new Date(
                         checkOutParts[0], // Year
-                        checkOutParts[1] - 1, // Month (zero-indexed)
+                        checkOutParts[1] - 1, // Month (zero-index)
                         checkOutParts[2] // Day
                     );
 
@@ -96,16 +96,16 @@ export default function ReservationPage() {
 
     const tileDisabled = ({ date, view }) => {
         if (view === 'month') {
-            // Disable past dates
+            
             const currentDate = new Date();
             const isPastDate = date < currentDate;
 
-            // Disable today and the next 7 days
+            
             const next7Days = new Date();
             next7Days.setDate(currentDate.getDate() + 7);
             const isNext7Days = date > currentDate && date <= next7Days;
 
-            // Check if the date is booked
+            
             const isBooked = isDateBooked(date);
 
             return isPastDate || isNext7Days || isBooked;
@@ -122,14 +122,14 @@ export default function ReservationPage() {
             let dayAfterEnd = new Date(end);
             dayAfterEnd.setDate(dayAfterEnd.getDate() + 1);
     
-            // Check if start or end is adjacent to disabled dates
+            
             if (tileDisabled({ date: dayBeforeStart, view: 'month' }) || tileDisabled({ date: dayAfterEnd, view: 'month' })) {
                 adjacentToDisabled = true;
             }
     
             if (adjacentToDisabled) {
                 Alert.showAlert("Nu puteți selecta datele imediat după sau înainte de date rezervate. Vă rugăm alocați timp pentru amenajare și curățenie.");
-                setSelectedDates([]); // Reset selection
+                setSelectedDates([]);
                 return;
             }
     
@@ -146,14 +146,14 @@ export default function ReservationPage() {
                 setSelectedDates([start.toISOString().split('T')[0], end.toISOString().split('T')[0]]);
             } else {
                 Alert.showAlert("Intervalul selectat contine date rezervate. Vă rugăm selectați alt interval.");
-                setSelectedDates([]); // Reset selection
+                setSelectedDates([]);
             }
         }
     };
     
 
     const formatDate = (date) => {
-        return date.split('T')[0]; // This will return the date part before 'T'
+        return date.split('T')[0];
     };
 
     const handleCardNumberChange = (e) => {
@@ -178,19 +178,19 @@ export default function ReservationPage() {
 
     const sendReservationEmails = async (guestId, hostId, locationId, adjustedCheckInDate, checkOutDate) => {
         try {
-            // Fetch guest info
+            
             const guestResponse = await axios.get(`/api/user-info/${guestId}`);
             const guestInfo = guestResponse.data;
     
-            // Fetch host info
+            
             const hostResponse = await axios.get(`/api/user-info/${hostId}`);
             const hostInfo = hostResponse.data;
     
-            // Fetch location info
+            
             const locationResponse = await axios.get(`/api/LocationInfo/${locationId}`);
             const locationInfo = locationResponse.data.locations[0];
     
-            // Calculate amenajare (preparation) and curatenie (cleaning) days
+            
             const dayBeforeCheckIn = new Date(adjustedCheckInDate);
             dayBeforeCheckIn.setDate(dayBeforeCheckIn.getDate() - 1);
     
@@ -200,7 +200,7 @@ export default function ReservationPage() {
             const formattedDayBeforeCheckIn = dayBeforeCheckIn.toISOString().split('T')[0];
             const formattedDayAfterCheckOut = dayAfterCheckOut.toISOString().split('T')[0];
     
-            // Prepare email data
+            
             const emailHostData = {
                 to_email: hostInfo.Email,
                 subiect: 'Aveti o noua rezervare la locatia dvs.',
@@ -213,7 +213,7 @@ export default function ReservationPage() {
                 mesaj: `Rezervarea dvs la ${locationInfo.Nume} de pe ${adjustedCheckInDate} pana pe ${checkOutDate} a fost confirmata. Informatiile de contact ale gazdei: Email: ${hostInfo.Email}, Telefon: ${hostInfo.Phone}. Aveti 48 ore pentru a anula rezervarea daca doriti acest lucru.`,
             };
     
-            // Send emails
+            
             await emailjs.send(SERVICE_ID_EMAILJS, TEMPLATE_ID_EMAILJS_ALL, emailHostData, PUBLIC_KEY_EMAILJS);
             await emailjs.send(SERVICE_ID_EMAILJS, TEMPLATE_ID_EMAILJS_ALL, emailGuestData, PUBLIC_KEY_EMAILJS);
     
@@ -246,11 +246,11 @@ export default function ReservationPage() {
                 const [originalCheckInDate, checkOutDate] = selectedDates;
                 const totalPrice = calculatePrice(originalCheckInDate, checkOutDate);
         
-                // Increment the check-in date by one day
+                
                 let adjustedCheckInDate = new Date(originalCheckInDate);
                 adjustedCheckInDate.setDate(adjustedCheckInDate.getDate() + 1);
         
-                // Format the dates
+                
                 adjustedCheckInDate = adjustedCheckInDate.toISOString().split('T')[0];
         
                 console.log('Submitting reservation with data:', {
@@ -267,7 +267,7 @@ export default function ReservationPage() {
                 }
         
                 const reservationResponse = await axios.post('/createReservation', {
-                    userId: userId, // Ensure the user ID is included in the request body
+                    userId: userId,
                     locationId,
                     hostId: hostId,
                     checkInDate: adjustedCheckInDate,
@@ -295,7 +295,7 @@ export default function ReservationPage() {
             }
         } catch (error) {
             console.error('Error creating reservation:', error);
-            console.log(error.response?.data); // Log the error response from the server
+            console.log(error.response?.data);
             navigate('/error');
         }
         

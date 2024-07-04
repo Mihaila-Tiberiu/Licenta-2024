@@ -16,40 +16,40 @@ const ImageCarousel = ({ locationImagesArray }) => {
   };
 
   useEffect(() => {
-    // Adjust container size whenever the current image index changes
+
     const adjustContainerSize = () => {
       const imageContainer = document.getElementById('image-container');
       if (imageContainer) {
         const containerWidth = imageContainer.clientWidth;
-        // Set the container height based on a desired aspect ratio (e.g., 16:9)
-        const containerHeight = containerWidth * (9 / 16); // Aspect ratio 16:9
+
+        const containerHeight = containerWidth * (9 / 16);
         imageContainer.style.height = `${containerHeight}px`;
       }
     };
 
-    // Call the adjustContainerSize function initially and whenever currentImageIndex changes
+
     adjustContainerSize();
-    window.addEventListener('resize', adjustContainerSize); // Adjust on window resize
+    window.addEventListener('resize', adjustContainerSize); 
 
     return () => {
-      window.removeEventListener('resize', adjustContainerSize); // Clean up event listener
+      window.removeEventListener('resize', adjustContainerSize);
     };
-  }, [currentImageIndex]); // Dependency on currentImageIndex
+  }, [currentImageIndex]);
 
   if (locationImagesArray.length === 0) {
-    // Render a gray background with no buttons if locationImagesArray is empty
+
     return (
       <div className="relative w-full max-w-4xl mx-auto h-80 bg-gray-200 rounded-md"></div>
     );
   }
 
-  // Render the image carousel with navigation buttons if locationImagesArray is not empty
+
   return (
     <div className="relative w-full max-w-4xl mx-auto">
       <div
         id="image-container"
         className="relative overflow-hidden rounded-md"
-        style={{ paddingBottom: '56.25%' }} // 16:9 aspect ratio (adjust as needed)
+        style={{ paddingBottom: '56.25%' }}
       >
         <img
           src={`http://localhost:4000/uploads/${locationImagesArray[currentImageIndex]}`}

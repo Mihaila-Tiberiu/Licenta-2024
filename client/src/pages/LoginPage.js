@@ -34,9 +34,21 @@ export default function LoginPage(){
          <div className="mb-64">
          <h1 className="text-4xl text-center mb-4">Autentificare</h1>
          <form className="max-w-md mx-auto" onSubmit={handleLoginSubmit}>
-            <input type="text" placeholder="nume utilizator" required
+            <input type="text" placeholder="nume utilizator" required onKeyPress={(evt) => {
+               
+               if (evt.key === ' ') {
+                  evt.preventDefault();
+               }
+            }}
+            pattern="^[a-zA-Z0-9]*$"
              value= {username} onChange={ev => setUsername(ev.target.value)}/>
-            <input type="password" placeholder="parola" required
+            <input type="password" placeholder="parola" required onKeyPress={(evt) => {
+               
+               if (evt.key === ' ') {
+                  evt.preventDefault();
+               }
+            }}
+            pattern="^[a-zA-Z0-9]*$"
              value= {password} onChange={ev => setPassword(ev.target.value)}/>
             <button className="bg-primary w-full border my-2 py-2 px-3 rounded text-white font-medium">Autentifică-te</button>
             <div className='text-center py-2 text-gray-500'>

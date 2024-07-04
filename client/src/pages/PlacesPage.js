@@ -29,6 +29,34 @@ export default function PlacesPage(){
 
     const [locations, setLocations] = useState([]);
 
+    const handleCheckInChange = (e) => {
+        
+        const value = e.target.value.replace(/\D/g, '');
+
+        
+        let formattedValue = value
+            .slice(0, 4)
+            .replace(/(\d{2})(\d+)/, '$1:$2')
+            .replace(/^(\d{1,2})$/, '$1');
+
+        
+            setCheckIn(formattedValue.slice(0, 5));
+        };
+
+    const handleCheckOutChange = (e) => {
+        
+        const value = e.target.value.replace(/\D/g, '');
+
+        
+        let formattedValue = value
+            .slice(0, 4)
+            .replace(/(\d{2})(\d+)/, '$1:$2')
+            .replace(/^(\d{1,2})$/, '$1');
+
+        
+            setCheckOut(formattedValue.slice(0, 5));
+        };
+
     useEffect(() => {
         const fetchUserLocations = async () => {
           try {
@@ -62,7 +90,7 @@ export default function PlacesPage(){
 
                 const fetchImageUrls = async () => {
                     try {
-                        const response = await axios.get('/getImageUrls/' + action); // Replace placeId with the actual location ID
+                        const response = await axios.get('/getImageUrls/' + action);
                         setAddedPhotos(response.data);
                     } catch (error) {
                         console.error('Error fetching image URLs:', error);
@@ -105,7 +133,7 @@ export default function PlacesPage(){
     }, [locations]);
 
     function uploadPhoto(ev) {
-        console.log(addedPhotos);//
+        console.log(addedPhotos);
         const files = ev.target.files;
         const data = new FormData();
         for (let i = 0; i < files.length; i++){
@@ -201,7 +229,7 @@ export default function PlacesPage(){
         );
     }
 
-    // Move photo to the front of the array
+    
     const movePhotoToFront = (index) => {
         const updatedPhotos = [...addedPhotos];
         const photoToMove = updatedPhotos.splice(index, 1);
@@ -210,12 +238,10 @@ export default function PlacesPage(){
     }
 
 
-    // Delete photo from the array and from the uploads folder
+    
     const deletePhoto = (index) => {
         const photoToDelete = addedPhotos[index];
-        // Call your backend API to delete the photo from the uploads folder
-
-        // Update the state to remove the photo from the array
+        //////////
         const updatedPhotos = addedPhotos.filter((photo, i) => i !== index);
         setAddedPhotos(updatedPhotos);
     }
@@ -317,9 +343,19 @@ export default function PlacesPage(){
                     <h2 className="text-xl mt-4 ">Stradă, număr, alte detalii etc.</h2>
                     <input required type="text" value={alte} onChange={ev=>setAlte(ev.target.value)} placeholder="Bd. Republicii, Nr 109 (vis-a-vis de florăria Floriana)"/>
                     <h2 className="text-xl mt-4 ">Capacitate</h2>
-                    <input required type="number" value={capacitate} onChange={ev=>setCapacitate(ev.target.value)} placeholder="Numărul maxim de persoane"/>
+                    <input required type="text" value={capacitate} onChange={ev=>setCapacitate(ev.target.value)} placeholder="Numărul maxim de persoane" onKeyPress={(evt) => {
+                        
+                        if (evt.key < '0' || evt.key > '9') {
+                            evt.preventDefault();
+                        }
+                    }}/>
                     <h2 className="text-xl mt-4 ">Prețul pe zi</h2>
-                    <input required type="text" value={ppzi} onChange={ev=>setPpzi(ev.target.value)} placeholder="Exprimat în RON"/>
+                    <input required type="text" value={ppzi} onChange={ev=>setPpzi(ev.target.value)} placeholder="Exprimat în RON" onKeyPress={(evt) => {
+                        
+                        if (evt.key !== '.' && (evt.key < '0' || evt.key > '9')) {
+                            evt.preventDefault();
+                        }
+                    }}/>
                     
                     <h2 className="text-xl mt-4 ">Fotografii</h2>
                     <div className="mt-2 flex flex-wrap gap-3 justify-center">
@@ -372,11 +408,21 @@ export default function PlacesPage(){
                     <div className="grid gap-2 sm:grid-cols-3">
                         <div>
                             <h3 className="mt-4  -mb-1">Oră check-in</h3>
-                            <input required type="text" value={checkIn} onChange={ev=>setCheckIn(ev.target.value)} placeholder="08:00" />
+                            <input 
+                            required 
+                            type="text" 
+                            value={checkIn} 
+                            onChange={handleCheckInChange} 
+                            placeholder="08:00" />
                         </div>
                         <div>
                             <h3 className="mt-4  -mb-1">Oră check-out</h3>
-                            <input required type="text" value={checkOut} onChange={ev=>setCheckOut(ev.target.value)} placeholder="10:00" />
+                            <input 
+                            required 
+                            type="text" 
+                            value={checkOut} 
+                            onChange={handleCheckOutChange} 
+                            placeholder="08:00" />
                         </div>
                     </div>
                     <div>
@@ -416,9 +462,19 @@ export default function PlacesPage(){
                     <h2 className="text-xl mt-4 ">Stradă, număr, alte detalii etc.</h2>
                     <input required type="text" value={alte} onChange={ev=>setAlte(ev.target.value)} placeholder="Bd. Republicii, Nr 109 (vis-a-vis de florăria Floriana)"/>
                     <h2 className="text-xl mt-4 ">Capacitate</h2>
-                    <input required type="number" value={capacitate} onChange={ev=>setCapacitate(ev.target.value)} placeholder="Numărul maxim de persoane"/>
+                    <input required type="text" value={capacitate} onChange={ev=>setCapacitate(ev.target.value)} placeholder="Numărul maxim de persoane" onKeyPress={(evt) => {
+                        
+                        if (evt.key < '0' || evt.key > '9') {
+                            evt.preventDefault();
+                        }
+                    }}/>
                     <h2 className="text-xl mt-4 ">Prețul pe zi</h2>
-                    <input required type="text" value={ppzi} onChange={ev=>setPpzi(ev.target.value)} placeholder="Exprimat în RON"/>
+                    <input required type="text" value={ppzi} onChange={ev=>setPpzi(ev.target.value)} placeholder="Exprimat în RON" onKeyPress={(evt) => {
+                        
+                        if (evt.key !== '.' && (evt.key < '0' || evt.key > '9')) {
+                            evt.preventDefault();
+                        }
+                    }}/>
                     
                     <h2 className="text-xl mt-4 ">Fotografii</h2>
                     <div className="mt-2 flex flex-wrap gap-3 justify-center">
@@ -471,11 +527,21 @@ export default function PlacesPage(){
                     <div className="grid gap-2 sm:grid-cols-3">
                         <div>
                             <h3 className="mt-4  -mb-1">Oră check-in</h3>
-                            <input required type="text" value={checkIn} onChange={ev=>setCheckIn(ev.target.value)} placeholder="08:00" />
+                            <input 
+                            required 
+                            type="text" 
+                            value={checkIn} 
+                            onChange={handleCheckInChange} 
+                            placeholder="08:00" />
                         </div>
                         <div>
                             <h3 className="mt-4  -mb-1">Oră check-out</h3>
-                            <input required type="text" value={checkOut} onChange={ev=>setCheckOut(ev.target.value)} placeholder="10:00" />
+                            <input 
+                            required 
+                            type="text" 
+                            value={checkOut} 
+                            onChange={handleCheckOutChange} 
+                            placeholder="08:00" />
                         </div>
                     </div>
                     <div>

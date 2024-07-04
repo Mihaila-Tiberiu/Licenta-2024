@@ -8,7 +8,7 @@ const Alert = ({ message, onClose }) => {
     const timer = setTimeout(() => {
       setIsOpen(false);
       onClose();
-    }, 5000); // Close the alert automatically after 1.5 seconds
+    }, 5000);
 
     return () => clearTimeout(timer);
   }, [onClose]);

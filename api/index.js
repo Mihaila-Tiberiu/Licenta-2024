@@ -36,22 +36,22 @@ app.get('/test', (req, res) => {
     res.json('test ok!');
 });
 
-// Inserare utilizator nou in DB
+
 app.post('/register', (req, res) => {
     const { username, email, password, phone } = req.body;
     
-    // Verificam daca utilizatorul exista deja
+   
     db.get(`SELECT * FROM Utilizatori WHERE Username = ?`, [username], (err, row) => {
         if (err) {
             console.error(err.message);
             return res.status(500).json({ error: 'Internal Server Error' });
         }
         
-        // Daca se gaseste un rand cu utilizatorul, se returneaza un mesaj corespunzator
+        
         if (row) {
             return res.status(409).json({ error: 'Nume de utilizator deja existent' });
         } else {
-            // Daca nu se gaseste utilizatorul, se continua procesul de inregistrare
+            
             const encryptedPassword = bcrypt.hashSync(password, bcryptSalt);
             const query = `INSERT INTO Utilizatori(Username, Email, Password, Phone) VALUES (?,?,?,?)`;
             db.run(query, [username, email, encryptedPassword, phone], (err) => {
@@ -68,7 +68,7 @@ app.post('/register', (req, res) => {
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
 
-    // verificam daca utilizatorul exista in BD
+   
     db.get('SELECT * FROM Utilizatori WHERE Username = ?', [username], (err, row) => {
         if (err) {
             return res.status(500).json({ error: err.message });
@@ -78,7 +78,7 @@ app.post('/login', (req, res) => {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        // verificam daca parola corespunde
+        
         const passwordsMatch = bcrypt.compareSync(password, row.Password);
         if (!passwordsMatch) {
             return res.status(401).json({ error: 'Parola incorecta' });
@@ -194,7 +194,7 @@ app.get('/api/userLocations', (req, res) => {
                 };
             }
   
-            // Assuming you have an array `locations` and you are pushing images into it
+            
             if (row.IdImagine) {
                 locations[locationId].images.push({
                     IdImagine: row.IdImagine,
@@ -202,7 +202,7 @@ app.get('/api/userLocations', (req, res) => {
                     URLimagine: row.URLimagine
                 });
 
-                // Sort the images array by IdImagine in ascending order
+                
                 locations[locationId].images.sort((a, b) => a.IdImagine - b.IdImagine);
             }   
 
@@ -233,7 +233,7 @@ app.get('/places/:placeId', (req, res) => {
 app.get('/getImageUrls/:placeId', (req, res) => {
     const action = req.params.placeId;
 
-    // Execute the SQL query to select URLs
+    
     db.all('SELECT URLimagine FROM Imagini WHERE IdLocatie = ?', [action], (err, rows) => {
         if (err) {
             console.error(err.message);
@@ -282,7 +282,7 @@ app.post('/editLocation', (req, res) => {
                     return;
                 }
 
-                // Delete existing photos associated with the location
+                
                 db.run(`DELETE FROM Imagini WHERE IdLocatie = ?`, [placeData.locationId], function(err) {
                     if (err) {
                         console.error(err.message);
@@ -290,7 +290,7 @@ app.post('/editLocation', (req, res) => {
                         return;
                     }
 
-                    // Insert new photos for the location
+                   
                     placeData.addedPhotos.forEach(photoURL => {
                         db.run(`INSERT INTO Imagini (IdLocatie, URLimagine) VALUES (?, ?)`, [placeData.locationId, photoURL], function(err) {
                             if (err) {
@@ -408,26 +408,26 @@ function checkOverlap(reservation, startDate, endDate) {
 
     const parts1 = reservation.CheckInDate.split('-');
     const year1 = parseInt(parts1[0], 10);
-    const month1 = parseInt(parts1[1], 10) - 1; // Subtract 1 because months are zero-based
+    const month1 = parseInt(parts1[1], 10) - 1;
     const day1 = parseInt(parts1[2], 10)
     const reservationStartDate = new Date(year1, month1, day1);
 
     const parts2 = reservation.CheckOutDate.split('-');
     const year2 = parseInt(parts2[0], 10);
-    const month2 = parseInt(parts2[1], 10) - 1; // Subtract 1 because months are zero-based
+    const month2 = parseInt(parts2[1], 10) - 1;
     const day2 = parseInt(parts2[2], 10);
     const reservationEndDate = new Date(year2, month2, day2);
 
     const parts3 = startDate.split('-');
     const day3 = parseInt(parts3[0], 10);
-    const month3 = parseInt(parts3[1], 10) - 1; // Subtract 1 because months are zero-based
+    const month3 = parseInt(parts3[1], 10) - 1;
     const year3 = parseInt(parts3[2], 10);
     const filterStartDate = new Date(year3, month3, day3);
 
-    // Parse endDate into its components
+
     const parts4 = endDate.split('-');
     const day4 = parseInt(parts4[0], 10);
-    const month4 = parseInt(parts4[1], 10) - 1; // Subtract 1 because months are zero-based
+    const month4 = parseInt(parts4[1], 10) - 1;
     const year4 = parseInt(parts4[2], 10);
     const filterEndDate = new Date(year4, month4, day4);
 
@@ -448,7 +448,6 @@ function checkOverlap(reservation, startDate, endDate) {
 
 app.get('/filterLocations', filterLocations);
 
-// Delete location endpoint
 app.delete('/deleteLocation/:locationId', (req, res) => {
     const locationId = req.params.locationId;
 
@@ -465,7 +464,6 @@ app.delete('/deleteLocation/:locationId', (req, res) => {
     });
 });
 
-// Get all the reviews of a location
 app.get('/getLocationReviews/:placeId', (req, res) => {
     const placeId = req.params.placeId;
 
@@ -479,7 +477,6 @@ app.get('/getLocationReviews/:placeId', (req, res) => {
     });
 });
 
-// Get all the reviews of a location
 app.get('/getLocationReviews/:placeId', (req, res) => {
     const placeId = req.params.placeId;
 
@@ -493,7 +490,6 @@ app.get('/getLocationReviews/:placeId', (req, res) => {
     });
 });
 
-// Get all the bookings of a location
 app.get('/getLocationBookings/:placeId', (req, res) => {
     const placeId = req.params.placeId;
 
@@ -508,7 +504,6 @@ app.get('/getLocationBookings/:placeId', (req, res) => {
     });
 });
 
-// Get all user bookings (AS CLIENT)
 app.get('/getAllUserBookings/:userId', (req, res) => {
     const userId = req.params.userId;
 
@@ -523,7 +518,6 @@ app.get('/getAllUserBookings/:userId', (req, res) => {
     });
 });
 
-// Get all user bookings (AS HOST)
 app.get('/getAllUserBookingsHOST/:userId', (req, res) => {
     const userId = req.params.userId;
 
@@ -538,11 +532,9 @@ app.get('/getAllUserBookingsHOST/:userId', (req, res) => {
     });
 });
 
-// Get all user bookings within the last 48 hours (AS CLIENT)
 app.get('/getAllUserBookings48Hours/:userId', (req, res) => {
     const userId = req.params.userId;
 
-    // Query to select user bookings within the last 48 hours excluding cancelled bookings
     const sql = `
         SELECT *
         FROM Rezervari
@@ -551,7 +543,6 @@ app.get('/getAllUserBookings48Hours/:userId', (req, res) => {
         AND Status NOT IN ('Anulata de oaspete', 'Anulata de gazda', 'Completa', 'Rezervata') ORDER BY IdRezervare DESC
     `;//, 'In asteptare')
 
-    // Execute the query with parameters
     db.all(sql, [userId], (err, rows) => {
         if (err) {
             console.error(err.message);
@@ -562,11 +553,9 @@ app.get('/getAllUserBookings48Hours/:userId', (req, res) => {
     });
 });
 
-// Get all user bookings within the last 48 hours (AS HOST)
 app.get('/getAllUserBookings48HoursHOST/:userId', (req, res) => {
     const userId = req.params.userId;
 
-    // Query to select user bookings within the last 48 hours excluding cancelled bookings
     const sql = `
         SELECT *
         FROM Rezervari
@@ -575,7 +564,6 @@ app.get('/getAllUserBookings48HoursHOST/:userId', (req, res) => {
         AND Status NOT IN ('Anulata de oaspete', 'Anulata de gazda', 'Completa', 'Rezervata') ORDER BY IdRezervare DESC
     `;//, 'In asteptare')
 
-    // Execute the query with parameters
     db.all(sql, [userId], (err, rows) => {
         if (err) {
             console.error(err.message);
@@ -587,11 +575,9 @@ app.get('/getAllUserBookings48HoursHOST/:userId', (req, res) => {
 });
 
 
-// Endpoint to get counts of user bookings and reviews for a location
 app.get('/userBookingReviewCount/:userId/:locationId', (req, res) => {
     const { userId, locationId } = req.params;
 
-    // Count bookings
     db.get(
         `SELECT COUNT(*) AS bookingCount FROM Rezervari WHERE UtilizatorIdUtilizator = ? AND LocatiiIdLocatie2 = ? AND Status = 'Completa' AND CheckOutDate < date('now', 'localtime')`,
         [userId, locationId],
@@ -602,7 +588,6 @@ app.get('/userBookingReviewCount/:userId/:locationId', (req, res) => {
 
             const bookingCount = bookingRow ? bookingRow.bookingCount : 0;
 
-            // Count reviews
             db.get(
                 `SELECT COUNT(*) AS reviewCount FROM Recenzii WHERE UtilizatorIdUtilizator = ? AND LocatieIdLocatie = ?`,
                 [userId, locationId],
@@ -620,19 +605,18 @@ app.get('/userBookingReviewCount/:userId/:locationId', (req, res) => {
     );
 });
 
-// Define route for submitting a review
 app.post('/submitReview', async (req, res) => {
     const { userId, locationId, rating, comment } = req.body;
 
     try {
-        // Insert review into the Recenzii table
+
         const insertQuery = `
             INSERT INTO Recenzii (UtilizatorIdUtilizator, LocatieIdLocatie, Rating, Comentariu)
             VALUES (?, ?, ?, ?)
         `;
         await runQuery(insertQuery, [userId, locationId, rating, comment]);
 
-        // Calculate new location rating
+
         const calculateRatingQuery = `
             SELECT AVG(Rating) AS AvgRating
             FROM Recenzii
@@ -642,7 +626,7 @@ app.post('/submitReview', async (req, res) => {
         const newRating = result.AvgRating || 0;
         const roundedRating = parseFloat(newRating.toFixed(2));
 
-        // Update location rating
+
         const updateQuery = `
             UPDATE Locatii
             SET Rating = ?
@@ -657,7 +641,7 @@ app.post('/submitReview', async (req, res) => {
     }
 });
 
-// Helper function to run a SQL query and return a promise
+
 function runQuery(query, params) {
     return new Promise((resolve, reject) => {
         db.run(query, params, function (err) {
@@ -670,7 +654,7 @@ function runQuery(query, params) {
     });
 }
 
-// Helper function to execute a query that returns a single result
+
 function getSingleResult(query, params) {
     return new Promise((resolve, reject) => {
         db.get(query, params, (err, row) => {
@@ -683,7 +667,7 @@ function getSingleResult(query, params) {
     });
 }
 
-// Define a GET endpoint to retrieve the current local time
+
 app.get('/localTime', (req, res) => {
     db.get("SELECT datetime('now', 'localtime') AS current_time", (err, row) => {
         if (err) {
@@ -733,7 +717,7 @@ app.get('/api/LocationInfo/:IdLocatie', (req, res) => {
                 };
             }
   
-            // Assuming you have an array `locations` and you are pushing images into it
+            
             if (row.IdImagine) {
                 locations[locationId].images.push({
                     IdImagine: row.IdImagine,
@@ -741,7 +725,7 @@ app.get('/api/LocationInfo/:IdLocatie', (req, res) => {
                     URLimagine: row.URLimagine
                 });
 
-                // Sort the images array by IdImagine in ascending order
+                
                 locations[locationId].images.sort((a, b) => a.IdImagine - b.IdImagine);
             }   
 
@@ -753,9 +737,7 @@ app.get('/api/LocationInfo/:IdLocatie', (req, res) => {
     });
 });
 
-///////
 
-// Backend method to cancel booking by host
 app.put('/cancelBookingByHost/:bookingId', (req, res) => {
     const bookingId = req.params.bookingId;
 
@@ -791,7 +773,7 @@ app.put('/cancelBookingByHost/:bookingId', (req, res) => {
     });
 });
 
-// Backend method to cancel booking by customer
+
 app.put('/cancelBookingByCustomer/:bookingId', (req, res) => {
     const bookingId = req.params.bookingId;
 
@@ -847,7 +829,7 @@ app.post('/createPayment', (req, res) => {
     });
 });
 
-// Backend code for creating a reservation
+
 app.post('/createReservation', (req, res) => {
     const { userId, locationId, hostId, checkInDate, checkOutDate, price } = req.body;
 
@@ -880,9 +862,9 @@ const cron = require('node-cron');
 const updateReservationsAndPayments = () => {
     const now = new Date();
     const twoDaysAgo = new Date(now);
-    twoDaysAgo.setHours(now.getHours() - 48);  // Set to 48 hours ago
+    twoDaysAgo.setHours(now.getHours() - 48);
 
-    const formattedTwoDaysAgo = twoDaysAgo.toISOString().slice(0, 19).replace('T', ' '); //
+    const formattedTwoDaysAgo = twoDaysAgo.toISOString().slice(0, 19).replace('T', ' ');
 
     const updateReservationsSql = `
         UPDATE Rezervari
@@ -904,21 +886,20 @@ const updateReservationsAndPayments = () => {
         WHERE Status = 'Rezervata' AND CheckoutDate <= ?
     `;
 
-    // Update reservations to 'Rezervata'
     db.run(updateReservationsSql, [formattedTwoDaysAgo], function (err) {
         if (err) {
             return console.error('Error updating reservations:', err.message);
         }
         console.log(`Updated ${this.changes} reservations to 'Rezervata'.`);
 
-        // Update payments for reservations now set to 'Rezervata'
+
         db.run(updatePaymentsSql, function (err) {
             if (err) {
                 return console.error('Error updating payments:', err.message);
             }
             console.log(`Updated ${this.changes} payments to 'Fonduri transferate in conturile Occasionest (10%) si gazdei (90%)'.`);
 
-            // Update reservations to 'Completa' where the checkout date is in the past
+
             db.run(updatePastReservationsSql, [now.toISOString().slice(0, 19).replace('T', ' ')], function (err) {
                 if (err) {
                     return console.error('Error updating past reservations:', err.message);
@@ -932,7 +913,7 @@ const updateReservationsAndPayments = () => {
 const updateReservationsAndPaymentsTest = () => {
     const now = new Date();
     const twoDaysAgo = new Date(now);
-    twoDaysAgo.setHours(now.getHours() - 0);  // Normally set to 48 hours ago
+    twoDaysAgo.setHours(now.getHours() - 0);
 
     const formattedTwoDaysAgo = twoDaysAgo.toISOString().slice(0, 19).replace('T', ' '); //
 
@@ -956,21 +937,18 @@ const updateReservationsAndPaymentsTest = () => {
         WHERE Status = 'Rezervata' AND CheckoutDate <= ?
     `;
 
-    // Update reservations to 'Rezervata'
     db.run(updateReservationsSql, [formattedTwoDaysAgo], function (err) {
         if (err) {
             return console.error('Error updating reservations:', err.message);
         }
         console.log(`Updated ${this.changes} reservations to 'Rezervata'.`);
 
-        // Update payments for reservations now set to 'Rezervata'
         db.run(updatePaymentsSql, function (err) {
             if (err) {
                 return console.error('Error updating payments:', err.message);
             }
             console.log(`Updated ${this.changes} payments to 'Fonduri transferate in conturile Occasionest (10%) si gazdei (90%)'.`);
 
-            // Update reservations to 'Completa' where the checkout date is in the past
             db.run(updatePastReservationsSql, [now.toISOString().slice(0, 19).replace('T', ' ')], function (err) {
                 if (err) {
                     return console.error('Error updating past reservations:', err.message);
@@ -987,8 +965,7 @@ app.get('/update-reservations-and-payments-test', (req, res) => {
 });
 
 
-// Schedule the cron job to run at 1 AM every day
-cron.schedule('0 1 * * *', () => { // 0 1 pt 01:00
+cron.schedule('0 1 * * *', () => { // 0 1 for 01:00
     console.log('Running cron job to update reservations and payments...');
     updateReservationsAndPayments();
 }, {
@@ -1021,7 +998,7 @@ app.post('/createTestReservationIn2023', (req, res) => {
     });
 });
 
-// API endpoint to get payment status by RezervareIdRezervare
+
 app.get('/paymentStatus/:id', (req, res) => {
     const id = req.params.id;
     db.get(`SELECT Status FROM Plati WHERE RezervareIdRezervare = ?`, [id], (err, row) => {
@@ -1072,7 +1049,7 @@ app.get('/api/total-price-admin', (req, res) => {
     });
 });
 
-// New endpoint to update payment statuses by hosts extraction
+
 app.post('/api/update-statuses/:userId', (req, res) => {
     const userId = req.params.userId;
     const updateQuery = `
@@ -1097,7 +1074,7 @@ app.post('/api/update-statuses/:userId', (req, res) => {
     });
 });
 
-// New endpoint to update payment statuses by OccasioNest extraction
+
 app.post('/api/update-statuses-admin', (req, res) => {
     const userId = req.params.userId;
     const updateQuery = `
@@ -1117,7 +1094,7 @@ app.post('/api/update-statuses-admin', (req, res) => {
     });
 });
 
-// New endpoint to fetch user info
+
 app.get('/api/user-info/:userId', (req, res) => {
     const userId = req.params.userId;
     const query = `SELECT * FROM Utilizatori WHERE IdUtilizator = ?`;
@@ -1130,7 +1107,7 @@ app.get('/api/user-info/:userId', (req, res) => {
     });
 });
 
-// Function to get payment stats
+
 const getPaymentStats = () => {
     return new Promise((resolve, reject) => {
       const query = "SELECT Status, COUNT(*) AS count FROM Plati GROUP BY Status";
@@ -1143,7 +1120,7 @@ const getPaymentStats = () => {
     });
   };
   
-  // Function to get reservation stats
+  
   const getReservationStats = () => {
     return new Promise((resolve, reject) => {
       const query = "SELECT Status, COUNT(*) AS count FROM Rezervari GROUP BY Status";
@@ -1156,7 +1133,7 @@ const getPaymentStats = () => {
     });
   };
   
-  // Payment stats endpoint
+  
   app.get('/api/payments/stats', async (req, res) => {
     try {
       const stats = await getPaymentStats();
@@ -1167,7 +1144,7 @@ const getPaymentStats = () => {
     }
   });
   
-  // Reservation stats endpoint
+  
   app.get('/api/reservations/stats', async (req, res) => {
     try {
       const stats = await getReservationStats();
@@ -1259,7 +1236,6 @@ app.get('/IdFromUsername/:Username', (req, res) => {
     });
 });
 
-// Start the server
 app.listen(4000, () => {
     console.log(`Server is running on port 4000`);
 });

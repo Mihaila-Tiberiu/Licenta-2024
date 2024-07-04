@@ -16,13 +16,13 @@ export default function LocationCalendar({ locationId }) {
 
                     const startDate = new Date(
                         checkInParts[0], // Year
-                        checkInParts[1] - 1, // Month (zero-indexed)
+                        checkInParts[1] - 1, // Month (zero-index)
                         checkInParts[2] // Day
                     );
 
                     const endDate = new Date(
                         checkOutParts[0], // Year
-                        checkOutParts[1] - 1, // Month (zero-indexed)
+                        checkOutParts[1] - 1, // Month (zero-index)
                         checkOutParts[2] // Day
                     );
 
@@ -55,16 +55,16 @@ export default function LocationCalendar({ locationId }) {
 
     const tileDisabled = ({ date, view }) => {
         if (view === 'month') {
-            // Disable past dates
+
             const currentDate = new Date();
             const isPastDate = date < currentDate;
 
-            // Disable today and the next 7 days
+
             const next7Days = new Date();
             next7Days.setDate(currentDate.getDate() + 7);
             const isNext7Days = date > currentDate && date <= next7Days;
 
-            // Check if the date is booked
+
             const isBooked = isDateBooked(date);
 
             return isPastDate || isNext7Days || isBooked;

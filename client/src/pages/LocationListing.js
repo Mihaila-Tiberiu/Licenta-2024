@@ -87,7 +87,7 @@ export default function LocationListing() {
                 rating,
                 comment
             });
-            // Handle success or update state accordingly
+            
             window.location.reload();
         } catch (error) {
             console.error('Error submitting review:', error);
@@ -120,8 +120,7 @@ export default function LocationListing() {
             <div className="bg-gray-100 px-8 pt-8">
                 <div className="container mx-auto flex flex-col md:flex-row">
                     <div className="md:w-1/2 pr-8">
-                        {/* Info content goes here */}
-                        {/* Example content */}
+                        
                         <h2 className="text-xl font-bold mb-1">{locationInfo.Rating} ⭐ </h2>
                         <h2 className="text-xl font-bold mb-12">{locationInfo.PretPeZi} RON / Zi</h2>
                         <p className="text-gray-700 mb-4">{locationInfo.Descriere}</p>
@@ -141,7 +140,7 @@ export default function LocationListing() {
                     
                     <div className="md:w-1/2 ">
                         <div className="flex flex-col justify-center items-center h-full">
-                            {/* Image carousel component */}
+                            
                             <ImageCarousel locationImagesArray={locationImagesArray} />
                         </div>
                     </div>

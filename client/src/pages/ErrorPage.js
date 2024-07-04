@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 
 const ErrorPage = () => {
     const location = useLocation();
-    const { tipEroare } = location.state || {}; // Fallback to an empty object if state is undefined
+    const { tipEroare } = location.state || {};
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">

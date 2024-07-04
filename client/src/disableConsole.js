@@ -1,4 +1,4 @@
-// disableConsole.js
+
 const disableConsole = () => {
     console.log = () => {};
     console.warn = () => {};

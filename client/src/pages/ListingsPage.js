@@ -69,7 +69,7 @@ const ListingsPage = () => {
     useEffect(() => {
         const fetchFilteredLocations = async () => {
             try {
-                // Extract parameters from the URL
+                
                 const urlParams = new URLSearchParams(window.location.search);
                 const Judet = urlParams.get('Judet');
                 const MinCapacitate = urlParams.get('MinCapacitate');
@@ -81,7 +81,7 @@ const ListingsPage = () => {
                 const MaxPretPeZi = urlParams.get('MaxPretPeZi');
                 const Oras = urlParams.get('Oras');
     
-                // Construct params object to pass to Axios GET request
+                
                 const params = {
                     Judet,
                     MinCapacitate,
@@ -255,6 +255,12 @@ const ListingsPage = () => {
                     type="number"
                     value={capacity}
                     onChange={(e) => setCapacity(e.target.value)}
+                    onKeyPress={(evt) => {
+                        
+                        if (evt.key < '0' || evt.key > '9') {
+                            evt.preventDefault();
+                        }
+                    }}
                     className="input-box"
                     placeholder='Numarul maxim de persoane'
                 />
@@ -267,6 +273,12 @@ const ListingsPage = () => {
                     type="number"
                     value={pricePerDay}
                     onChange={(e) => setPricePerDay(e.target.value)}
+                    onKeyPress={(evt) => {
+                        
+                        if (evt.key !== '.' && (evt.key < '0' || evt.key > '9')) {
+                            evt.preventDefault();
+                        }
+                    }}
                     className="input-box"
                     placeholder='Pretul maxim pe zi exprimat in RON'
                 />

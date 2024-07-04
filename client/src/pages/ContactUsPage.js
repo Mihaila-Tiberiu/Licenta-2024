@@ -93,6 +93,7 @@ export default function ContactUsPage() {
                                 className="mt-1 p-2 border border-gray-300 rounded-md w-full"
                                 placeholder="Introduceți adresa de email"
                                 required
+                                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
                             />
                         </div>
                         <div className="mb-4">
@@ -105,7 +106,13 @@ export default function ContactUsPage() {
                                 name="phone"
                                 className="mt-1 p-2 border border-gray-300 rounded-md w-full"
                                 placeholder="Introduceți numărul de telefon"
+                                pattern="\d{10}"
                                 required
+                                maxLength={10} minLength={10} onKeyPress={(evt) => {
+                                    if (evt.key < '0' || evt.key > '9') {
+                                        evt.preventDefault();
+                                    }
+                                }}  
                             />
                         </div>
                         <div className='mb-4'>

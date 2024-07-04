@@ -41,7 +41,7 @@ export default function IndexPage(){
   };
 
   const handleSearch = () => {
-    // Redirect to listings page with parameters
+
     navigate(`/listings?Judet=${county}`
     +`&MinCapacitate=${eventType}`
     +`&startDate=${(startDateFormatted) ? startDateFormatted : ''}`
