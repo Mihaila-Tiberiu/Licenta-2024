@@ -6,7 +6,6 @@ const cookieParser = require('cookie-parser');
 const multer = require('multer');
 const fs = require('fs');
 const bodyParser = require('body-parser');
-const { SERVICE_ID_EMAILJS, TEMPLATE_ID_EMAILJS, PUBLIC_KEY_EMAILJS} = require('./config.js');
 
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('./database.sqlite3', sqlite3.OPEN_READWRITE, (err)=> {
@@ -841,7 +840,7 @@ app.post('/createReservation', (req, res) => {
 
     const sql = `
         INSERT INTO Rezervari (UtilizatorIdUtilizator, LocatiiIdLocatie2, UtilizatorIdUtilizator2, CheckInDate, CheckOutDate, Pret, Status, BookingTimestamp)
-        VALUES (?, ?, ?, ?, ?, ?, 'In asteptare', datetime('now'))
+        VALUES (?, ?, ?, ?, ?, ?, 'In asteptare', datetime('now', 'localtime'))
     `;
     const params = [userId, locationId, hostId, checkInDate, checkOutDate, price];
 
@@ -912,15 +911,11 @@ const updateReservationsAndPayments = () => {
 
 const updateReservationsAndPaymentsTest = () => {
     const now = new Date();
-    const twoDaysAgo = new Date(now);
-    twoDaysAgo.setHours(now.getHours() - 0);
-
-    const formattedTwoDaysAgo = twoDaysAgo.toISOString().slice(0, 19).replace('T', ' '); //
 
     const updateReservationsSql = `
         UPDATE Rezervari
         SET Status = 'Rezervata'
-        WHERE Status = 'In asteptare' AND BookingTimestamp <= ?
+        WHERE Status = 'In asteptare'
     `;
 
     const updatePaymentsSql = `
@@ -937,7 +932,7 @@ const updateReservationsAndPaymentsTest = () => {
         WHERE Status = 'Rezervata' AND CheckoutDate <= ?
     `;
 
-    db.run(updateReservationsSql, [formattedTwoDaysAgo], function (err) {
+    db.run(updateReservationsSql, [], function (err) {
         if (err) {
             return console.error('Error updating reservations:', err.message);
         }

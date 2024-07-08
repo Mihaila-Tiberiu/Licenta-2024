@@ -93,7 +93,6 @@ export default function ContactUsPage() {
                                 className="mt-1 p-2 border border-gray-300 rounded-md w-full"
                                 placeholder="Introduceți adresa de email"
                                 required
-                                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
                             />
                         </div>
                         <div className="mb-4">

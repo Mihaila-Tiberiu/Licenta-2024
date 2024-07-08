@@ -6,6 +6,7 @@ import { Navigate } from "react-router-dom";
 import { useContext } from "react";
 import { UserContext } from "../UserContext";
 import { CitySelect, StateSelect } from 'react-country-state-city';
+import Alert from '../Alert';
 
 export default function PlacesPage(){
     const {action} = useParams();
@@ -162,13 +163,17 @@ export default function PlacesPage(){
         
     }
 
-    async function addNewPlace(ev){
+    async function addNewPlace(ev) {
         ev.preventDefault();
-
+    
+        if (!judet || !oras) {
+            Alert.showAlert('Vă rugăm să completați atât câmpul "Județ", cât și câmpul "Oraș".');
+            return;
+        }
+    
         const facilitatiString = facilitati.join(', ');
-
-        const placeData = 
-        {
+    
+        const placeData = {
             utilizatorIdUtilizator: user.IdUtilizator,
             denumire,
             descriere,
@@ -182,6 +187,7 @@ export default function PlacesPage(){
             checkIn,
             checkOut
         }
+    
         try {
             await axios.post('/addNewLocation', placeData);
             setRedirect('/account/places');
@@ -192,6 +198,11 @@ export default function PlacesPage(){
 
     async function editPlace(ev){
         ev.preventDefault();
+
+        if (!judet || !oras) {
+            Alert.showAlert('Vă rugăm să completați atât câmpul "Județ", cât și câmpul "Oraș".');
+            return;
+        }
 
         const facilitatiString = facilitati.join(', ');
 

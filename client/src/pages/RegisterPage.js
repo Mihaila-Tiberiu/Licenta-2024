@@ -23,12 +23,12 @@ export default function RegisterPage(){
         })
         .catch(error => {
             
-            if (error.response.status === 422) {
+            if (error.response.status === 409) {
                 Alert.showAlert(error.response.data.error);
             
             } else {
                 console.error('Error:', error.message);
-                Alert.showAlert('Eroare de server');
+                Alert.showAlert(error.message);
             }
         });
     }
@@ -49,7 +49,7 @@ export default function RegisterPage(){
             <input type="email" placeholder={"adresa@email.com"} required 
                 value={email} 
                 onChange={ev=>setEmail(ev.target.value)}
-                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"/>
+            />
             <input type="tel" placeholder={"0723456789"} pattern="[0-9]{10}" required
                 value={phone} 
                 onChange={ev=>setPhone(ev.target.value)} onKeyPress={(evt) => {
