@@ -54,7 +54,7 @@ export default function MyBookingsPage() {
                 to_email: userEmailResponse.data.email
             };
     
-            // TEST // await emailjs.send(SERVICE_ID_EMAILJS, TEMPLATE_ID_EMAILJS_ALL, emailParams, PUBLIC_KEY_EMAILJS);
+            await emailjs.send(SERVICE_ID_EMAILJS, TEMPLATE_ID_EMAILJS_ALL, emailParams, PUBLIC_KEY_EMAILJS);
             Alert.showAlert('Rezervarea a fost anulată și gazda a fost notificată.');
         } catch (error) {
             console.error('Failed to delete booking or send email:', error);

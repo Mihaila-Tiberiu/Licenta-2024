@@ -289,7 +289,7 @@ export default function ReservationPage() {
                     cvc,
                 });
 
-                // TEST // await sendReservationEmails(userId, hostId, locationId, adjustedCheckInDate, checkOutDate);
+                await sendReservationEmails(userId, hostId, locationId, adjustedCheckInDate, checkOutDate);
         
                 navigate('/success');
             }
